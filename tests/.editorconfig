@@ -1,0 +1,12 @@
+[*.cs]
+dotnet_naming_rule.test_methods_must_be_lowercase_with_underscores.symbols = test_methods
+dotnet_naming_rule.test_methods_must_be_lowercase_with_underscores.style = lowercase_with_underscores
+dotnet_naming_rule.test_methods_must_be_lowercase_with_underscores.severity = suggestion
+
+dotnet_naming_symbols.test_methods.applicable_kinds = method
+dotnet_naming_symbols.test_methods.applicable_accessibilities = public
+
+dotnet_naming_style.lowercase_with_underscores.word_separator = "_"
+dotnet_naming_style.lowercase_with_underscores.capitalization = all_lower
+
+dotnet_style_predefined_type_for_locals_parameters_members = true:error
