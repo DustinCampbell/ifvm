@@ -50,7 +50,7 @@ namespace IFVM.Core.Tests
 
             Assert.Throws<ArgumentOutOfRangeException>(() =>
             {
-                var b = memory.ReadByte(-1);
+                memory.ReadByte(-1);
             });
         }
 
@@ -61,7 +61,7 @@ namespace IFVM.Core.Tests
 
             Assert.Throws<ArgumentOutOfRangeException>(() =>
             {
-                var b = memory.ReadByte(memory.Length);
+                memory.ReadByte(memory.Length);
             });
         }
 
@@ -71,6 +71,314 @@ namespace IFVM.Core.Tests
             var memory = Memory.Create(new byte[] { 1, 2, 3, 4 });
             var b = memory.ReadByte(memory.Length - 1);
             Assert.Equal(4, b);
+        }
+
+        [Fact]
+        public void writebyte_with_zero_sets_first_byte()
+        {
+            var memory = Memory.Create(new byte[] { 1, 2, 3, 4 });
+
+            var b1 = memory.ReadByte(0);
+            Assert.Equal(1, b1);
+
+            memory.WriteByte(0, 5);
+            var b2 = memory.ReadByte(0);
+            Assert.Equal(5, b2);
+        }
+
+        [Fact]
+        public void writebyte_with_minus_one_throws()
+        {
+            var memory = Memory.Create(new byte[] { 1, 2, 3, 4 });
+
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
+            {
+                memory.WriteByte(-1, 5);
+            });
+        }
+
+        [Fact]
+        public void writebyte_with_length_throws()
+        {
+            var memory = Memory.Create(new byte[] { 1, 2, 3, 4 });
+
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
+            {
+                memory.WriteByte(memory.Length, 5);
+            });
+        }
+
+        [Fact]
+        public void writebyte_with_length_minus_one_returns_last_byte()
+        {
+            var memory = Memory.Create(new byte[] { 1, 2, 3, 4 });
+
+            var b1 = memory.ReadByte(memory.Length - 1);
+            Assert.Equal(4, b1);
+
+            memory.WriteByte(memory.Length - 1, 5);
+            var b2 = memory.ReadByte(memory.Length - 1);
+            Assert.Equal(5, b2);
+        }
+
+        [Fact]
+        public void readword_with_zero_returns_first_word()
+        {
+            var memory = Memory.Create(new byte[] { 0x12, 0x34, 0x56, 0x78 });
+            var w = memory.ReadWord(0);
+            Assert.Equal(0x1234, w);
+        }
+
+        [Fact]
+        public void readword_with_minus_one_throws()
+        {
+            var memory = Memory.Create(new byte[] { 0x12, 0x34, 0x56, 0x78 });
+
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
+            {
+                memory.ReadWord(-1);
+            });
+        }
+
+        [Fact]
+        public void readword_with_length_throws()
+        {
+            var memory = Memory.Create(new byte[] { 0x12, 0x34, 0x56, 0x78 });
+
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
+            {
+                memory.ReadWord(memory.Length);
+            });
+        }
+
+        [Fact]
+        public void readword_with_length_minus_one_throws()
+        {
+            var memory = Memory.Create(new byte[] { 0x12, 0x34, 0x56, 0x78 });
+
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
+            {
+                memory.ReadWord(memory.Length - 1);
+            });
+        }
+
+        [Fact]
+        public void readword_with_length_minus_two_returns_last_word()
+        {
+            var memory = Memory.Create(new byte[] { 0x12, 0x34, 0x56, 0x78 });
+            var w = memory.ReadWord(memory.Length - 2);
+            Assert.Equal(0x5678, w);
+        }
+
+        [Fact]
+        public void writeword_with_zero_sets_first_word()
+        {
+            var memory = Memory.Create(new byte[] { 0x12, 0x34, 0x56, 0x78 });
+
+            var w1 = memory.ReadWord(0);
+            Assert.Equal(0x1234, w1);
+
+            memory.WriteWord(0, 0x4321);
+            var w2 = memory.ReadWord(0);
+            Assert.Equal(0x4321, w2);
+        }
+
+        [Fact]
+        public void writeword_with_minus_one_throws()
+        {
+            var memory = Memory.Create(new byte[] { 0x12, 0x34, 0x56, 0x78 });
+
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
+            {
+                memory.WriteWord(-1, 0x4321);
+            });
+        }
+
+        [Fact]
+        public void writeword_with_length_throws()
+        {
+            var memory = Memory.Create(new byte[] { 0x12, 0x34, 0x56, 0x78 });
+
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
+            {
+                memory.WriteWord(memory.Length, 0x8765);
+            });
+        }
+
+        [Fact]
+        public void writeword_with_length_minus_one_throws()
+        {
+            var memory = Memory.Create(new byte[] { 0x12, 0x34, 0x56, 0x78 });
+
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
+            {
+                memory.WriteWord(memory.Length - 1, 0x8765);
+            });
+        }
+
+        [Fact]
+        public void writeword_with_length_minus_two_returns_last_word()
+        {
+            var memory = Memory.Create(new byte[] { 0x12, 0x34, 0x56, 0x78 });
+
+            var w1 = memory.ReadWord(memory.Length - 2);
+            Assert.Equal(0x5678, w1);
+
+            memory.WriteWord(memory.Length - 2, 0x7865);
+            var w2 = memory.ReadWord(memory.Length - 2);
+            Assert.Equal(0x7865, w2);
+        }
+
+        [Fact]
+        public void readdword_with_zero_returns_first_dword()
+        {
+            var memory = Memory.Create(new byte[] { 0x12, 0x34, 0x56, 0x78, 0x9a, 0xbc, 0xde, 0xf0 });
+            var d2 = memory.ReadDWord(0);
+            Assert.Equal(0x12345678u, d2);
+        }
+
+        [Fact]
+        public void readdword_with_minus_one_throws()
+        {
+            var memory = Memory.Create(new byte[] { 0x12, 0x34, 0x56, 0x78, 0x9a, 0xbc, 0xde, 0xf0 });
+
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
+            {
+                memory.ReadDWord(-1);
+            });
+        }
+
+        [Fact]
+        public void readdword_with_length_throws()
+        {
+            var memory = Memory.Create(new byte[] { 0x12, 0x34, 0x56, 0x78, 0x9a, 0xbc, 0xde, 0xf0 });
+
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
+            {
+                memory.ReadDWord(memory.Length);
+            });
+        }
+
+        [Fact]
+        public void readdword_with_length_minus_one_throws()
+        {
+            var memory = Memory.Create(new byte[] { 0x12, 0x34, 0x56, 0x78, 0x9a, 0xbc, 0xde, 0xf0 });
+
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
+            {
+                memory.ReadDWord(memory.Length - 1);
+            });
+        }
+
+        [Fact]
+        public void readdword_with_length_minus_two_throws()
+        {
+            var memory = Memory.Create(new byte[] { 0x12, 0x34, 0x56, 0x78, 0x9a, 0xbc, 0xde, 0xf0 });
+
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
+            {
+                memory.ReadDWord(memory.Length - 2);
+            });
+        }
+
+        [Fact]
+        public void readdword_with_length_minus_three_throws()
+        {
+            var memory = Memory.Create(new byte[] { 0x12, 0x34, 0x56, 0x78, 0x9a, 0xbc, 0xde, 0xf0 });
+
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
+            {
+                memory.ReadDWord(memory.Length - 3);
+            });
+        }
+
+        [Fact]
+        public void readdword_with_length_minus_four_returns_last_dword()
+        {
+            var memory = Memory.Create(new byte[] { 0x12, 0x34, 0x56, 0x78, 0x9a, 0xbc, 0xde, 0xf0 });
+            var dw = memory.ReadDWord(memory.Length - 4);
+            Assert.Equal(0x9abcdef0u, dw);
+        }
+
+        [Fact]
+        public void writedword_with_zero_sets_first_dword()
+        {
+            var memory = Memory.Create(new byte[] { 0x12, 0x34, 0x56, 0x78, 0x9a, 0xbc, 0xde, 0xf0 });
+
+            var dw1 = memory.ReadDWord(0);
+            Assert.Equal(0x12345678u, dw1);
+
+            memory.WriteDWord(0, 0x87654321u);
+            var dw2 = memory.ReadDWord(0);
+            Assert.Equal(0x87654321u, dw2);
+        }
+
+        [Fact]
+        public void writedword_with_minus_one_throws()
+        {
+            var memory = Memory.Create(new byte[] { 0x12, 0x34, 0x56, 0x78, 0x9a, 0xbc, 0xde, 0xf0 });
+
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
+            {
+                memory.WriteDWord(-1, 0x87654321u);
+            });
+        }
+
+        [Fact]
+        public void writedword_with_length_throws()
+        {
+            var memory = Memory.Create(new byte[] { 0x12, 0x34, 0x56, 0x78, 0x9a, 0xbc, 0xde, 0xf0 });
+
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
+            {
+                memory.WriteDWord(memory.Length, 0x0fedcba9u);
+            });
+        }
+
+        [Fact]
+        public void writedword_with_length_minus_one_throws()
+        {
+            var memory = Memory.Create(new byte[] { 0x12, 0x34, 0x56, 0x78, 0x9a, 0xbc, 0xde, 0xf0 });
+
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
+            {
+                memory.WriteDWord(memory.Length - 1, 0x0fedcba9u);
+            });
+        }
+
+        [Fact]
+        public void writedword_with_length_minus_two_throws()
+        {
+            var memory = Memory.Create(new byte[] { 0x12, 0x34, 0x56, 0x78, 0x9a, 0xbc, 0xde, 0xf0 });
+
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
+            {
+                memory.WriteDWord(memory.Length - 2, 0x0fedcba9u);
+            });
+        }
+
+        [Fact]
+        public void writedword_with_length_minus_three_throws()
+        {
+            var memory = Memory.Create(new byte[] { 0x12, 0x34, 0x56, 0x78, 0x9a, 0xbc, 0xde, 0xf0 });
+
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
+            {
+                memory.WriteDWord(memory.Length - 3, 0x0fedcba9u);
+            });
+        }
+
+        [Fact]
+        public void writedword_with_length_minus_four_returns_last_dword()
+        {
+            var memory = Memory.Create(new byte[] { 0x12, 0x34, 0x56, 0x78, 0x9a, 0xbc, 0xde, 0xf0 });
+
+            var dw1 = memory.ReadDWord(memory.Length - 4);
+            Assert.Equal(0x9abcdef0u, dw1);
+
+            memory.WriteDWord(memory.Length - 4, 0x0fedcba9u);
+            var dw2 = memory.ReadDWord(memory.Length - 4);
+            Assert.Equal(0x0fedcba9u, dw2);
         }
     }
 }
