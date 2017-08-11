@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace IFVM.Core
 {
-    public class Memory
+    public partial class Memory
     {
         private static readonly ObjectPool<byte[]> s_twoByteArrays = new ObjectPool<byte[]>(() => new byte[2], 512);
         private static readonly ObjectPool<byte[]> s_fourByteArrays = new ObjectPool<byte[]>(() => new byte[4], 512);
@@ -136,6 +136,11 @@ namespace IFVM.Core
             Array.Copy(tempArray, 0, _bytes, index, sizeof(uint));
 
             s_fourByteArrays.Free(tempArray);
+        }
+
+        public Scanner CreateScanner(int offset)
+        {
+            return new Scanner(this, offset);
         }
     }
 }
