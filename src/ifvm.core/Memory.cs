@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using IFVM.Core.Extensions;
@@ -11,6 +12,7 @@ namespace IFVM.Core
         private static readonly ObjectPool<byte[]> s_fourByteArrays = new ObjectPool<byte[]>(() => new byte[4], 512);
 
         private byte[] _bytes;
+        private List<(int start, int length)> _readOnlyRegions;
 
         public int Size => _bytes.Length;
 
@@ -37,7 +39,7 @@ namespace IFVM.Core
             Array.Resize(ref _bytes, newSize);
         }
 
-        private void ValidateIndex(int index, int size)
+        private void ValidateOffsetAndSize(int index, int size)
         {
             if (index < 0 || index > _bytes.Length - size)
             {
@@ -45,19 +47,44 @@ namespace IFVM.Core
             }
         }
 
-        public byte ReadByte(int index)
+        private void ValidateOffsetAndSizeForWrite(int index, int size)
         {
-            ValidateIndex(index, sizeof(byte));
-
-            return _bytes[index];
+            if (_readOnlyRegions != null)
+            {
+                foreach (var (start, length) in _readOnlyRegions)
+                {
+                    if ((index >= start && index < start + length) ||
+                        (index + size > start && index + size <= start + length))
+                    {
+                        throw new InvalidOperationException("Write overlaps with a region of read-only memory");
+                    }
+                }
+            }
         }
 
-        public ushort ReadWord(int index)
+        public void AddReadOnlyRegion(int start, int length)
         {
-            ValidateIndex(index, sizeof(ushort));
+            if (_readOnlyRegions == null)
+            {
+                _readOnlyRegions = new List<(int start, int length)>();
+            }
+
+            _readOnlyRegions.Add((start, length));
+        }
+
+        public byte ReadByte(int offset)
+        {
+            ValidateOffsetAndSize(offset, sizeof(byte));
+
+            return _bytes[offset];
+        }
+
+        public ushort ReadWord(int offset)
+        {
+            ValidateOffsetAndSize(offset, sizeof(ushort));
 
             var tempArray = s_twoByteArrays.Allocate();
-            Array.Copy(_bytes, index, tempArray, 0, sizeof(ushort));
+            Array.Copy(_bytes, offset, tempArray, 0, sizeof(ushort));
 
             var b1 = tempArray[0];
             var b2 = tempArray[1];
@@ -67,12 +94,12 @@ namespace IFVM.Core
             return (ushort)((b1 << 8) | b2);
         }
 
-        public uint ReadDWord(int index)
+        public uint ReadDWord(int offset)
         {
-            ValidateIndex(index, sizeof(uint));
+            ValidateOffsetAndSize(offset, sizeof(uint));
 
             var tempArray = s_fourByteArrays.Allocate();
-            Array.Copy(_bytes, index, tempArray, 0, sizeof(uint));
+            Array.Copy(_bytes, offset, tempArray, 0, sizeof(uint));
 
             var b1 = tempArray[0];
             var b2 = tempArray[1];
@@ -84,30 +111,33 @@ namespace IFVM.Core
             return (uint)((b1 << 24) | (b2 << 16) | (b3 << 8) | b4);
         }
 
-        public void WriteByte(int index, byte value)
+        public void WriteByte(int offset, byte value)
         {
-            ValidateIndex(index, sizeof(byte));
+            ValidateOffsetAndSize(offset, sizeof(byte));
+            ValidateOffsetAndSizeForWrite(offset, sizeof(byte));
 
-            _bytes[index] = value;
+            _bytes[offset] = value;
         }
 
-        public void WriteWord(int index, ushort value)
+        public void WriteWord(int offset, ushort value)
         {
-            ValidateIndex(index, sizeof(ushort));
+            ValidateOffsetAndSize(offset, sizeof(ushort));
+            ValidateOffsetAndSizeForWrite(offset, sizeof(ushort));
 
             var tempArray = s_twoByteArrays.Allocate();
 
             tempArray[0] = (byte)(value >> 8);
             tempArray[1] = (byte)(value & 0x00ff);
 
-            Array.Copy(tempArray, 0, _bytes, index, sizeof(ushort));
+            Array.Copy(tempArray, 0, _bytes, offset, sizeof(ushort));
 
             s_twoByteArrays.Free(tempArray);
         }
 
-        public void WriteDWord(int index, uint value)
+        public void WriteDWord(int offset, uint value)
         {
-            ValidateIndex(index, sizeof(uint));
+            ValidateOffsetAndSize(offset, sizeof(uint));
+            ValidateOffsetAndSizeForWrite(offset, sizeof(uint));
 
             var tempArray = s_fourByteArrays.Allocate();
 
@@ -116,7 +146,7 @@ namespace IFVM.Core
             tempArray[2] = (byte)(value >> 8);
             tempArray[3] = (byte)(value & 0x000000ff);
 
-            Array.Copy(tempArray, 0, _bytes, index, sizeof(uint));
+            Array.Copy(tempArray, 0, _bytes, offset, sizeof(uint));
 
             s_fourByteArrays.Free(tempArray);
         }

@@ -122,6 +122,52 @@ namespace IFVM.Core.Tests
         }
 
         [Fact]
+        public void writebyte_before_rom_start_succeeds()
+        {
+            var memory = Memory.Create(new byte[] { 1, 2, 3, 4, 5 });
+            memory.AddReadOnlyRegion(1, 3);
+
+            memory.WriteByte(0, 6);
+            var b = memory.ReadByte(0);
+            Assert.Equal(6, b);
+        }
+
+        [Fact]
+        public void writebyte_at_rom_start_fails()
+        {
+            var memory = Memory.Create(new byte[] { 1, 2, 3, 4, 5 });
+            memory.AddReadOnlyRegion(1, 3);
+
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+                memory.WriteByte(1, 6);
+            });
+        }
+
+        [Fact]
+        public void writebyte_before_rom_end_fails()
+        {
+            var memory = Memory.Create(new byte[] { 1, 2, 3, 4, 5 });
+            memory.AddReadOnlyRegion(1, 3);
+
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+                memory.WriteByte(3, 6);
+            });
+        }
+
+        [Fact]
+        public void writebyte_after_rom_end_succeeds()
+        {
+            var memory = Memory.Create(new byte[] { 1, 2, 3, 4, 5 });
+            memory.AddReadOnlyRegion(1, 3);
+
+            memory.WriteByte(4, 6);
+            var b = memory.ReadByte(4);
+            Assert.Equal(6, b);
+        }
+
+        [Fact]
         public void readword_with_zero_returns_first_word()
         {
             var memory = Memory.Create(new byte[] { 0x12, 0x34, 0x56, 0x78 });
@@ -227,6 +273,76 @@ namespace IFVM.Core.Tests
             memory.WriteWord(memory.Size - 2, 0x7865);
             var w2 = memory.ReadWord(memory.Size - 2);
             Assert.Equal(0x7865, w2);
+        }
+
+        [Fact]
+        public void writeword_before_rom_start_succeeds()
+        {
+            var memory = Memory.Create(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 });
+            memory.AddReadOnlyRegion(2, 4);
+
+            memory.WriteWord(0, 0x4321);
+            var w = memory.ReadWord(0);
+            Assert.Equal(0x4321, w);
+        }
+
+        [Fact]
+        public void writeword_overlapping_rom_start_fails()
+        {
+            var memory = Memory.Create(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 });
+            memory.AddReadOnlyRegion(2, 4);
+
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+                memory.WriteWord(1, 0x4321);
+            });
+        }
+
+        [Fact]
+        public void writeword_at_rom_start_fails()
+        {
+            var memory = Memory.Create(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 });
+            memory.AddReadOnlyRegion(2, 4);
+
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+                memory.WriteWord(2, 0x4321);
+            });
+        }
+
+        [Fact]
+        public void writeword_before_rom_end_fails()
+        {
+            var memory = Memory.Create(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 });
+            memory.AddReadOnlyRegion(2, 4);
+
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+                memory.WriteWord(4, 0x4321);
+            });
+        }
+
+        [Fact]
+        public void writeword_overlapping_rom_end_fails()
+        {
+            var memory = Memory.Create(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 });
+            memory.AddReadOnlyRegion(2, 4);
+
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+                memory.WriteWord(5, 0x4321);
+            });
+        }
+
+        [Fact]
+        public void writeword_after_rom_end_succeeds()
+        {
+            var memory = Memory.Create(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 });
+            memory.AddReadOnlyRegion(2, 4);
+
+            memory.WriteWord(6, 0x4321);
+            var w = memory.ReadWord(6);
+            Assert.Equal(0x4321, w);
         }
 
         [Fact]
@@ -379,6 +495,124 @@ namespace IFVM.Core.Tests
             memory.WriteDWord(memory.Size - 4, 0x0fedcba9u);
             var dw2 = memory.ReadDWord(memory.Size - 4);
             Assert.Equal(0x0fedcba9u, dw2);
+        }
+
+        [Fact]
+        public void writedword_before_rom_start_succeeds()
+        {
+            var memory = Memory.Create(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 });
+            memory.AddReadOnlyRegion(4, 8);
+
+            memory.WriteDWord(0, 0x87654321);
+            var dw = memory.ReadDWord(0);
+            Assert.Equal(0x87654321, dw);
+        }
+
+        [Fact]
+        public void writedword_overlapping_rom_start_fails_1()
+        {
+            var memory = Memory.Create(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 });
+            memory.AddReadOnlyRegion(4, 8);
+
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+                memory.WriteDWord(1, 0x87654321);
+            });
+        }
+
+        [Fact]
+        public void writedword_overlapping_rom_start_fails_2()
+        {
+            var memory = Memory.Create(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 });
+            memory.AddReadOnlyRegion(4, 8);
+
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+                memory.WriteDWord(2, 0x87654321);
+            });
+        }
+
+        [Fact]
+        public void writedword_overlapping_rom_start_fails_3()
+        {
+            var memory = Memory.Create(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 });
+            memory.AddReadOnlyRegion(4, 8);
+
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+                memory.WriteDWord(3, 0x87654321);
+            });
+        }
+
+        [Fact]
+        public void writedword_at_rom_start_fails()
+        {
+            var memory = Memory.Create(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 });
+            memory.AddReadOnlyRegion(4, 8);
+
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+                memory.WriteDWord(4, 0x87654321);
+            });
+        }
+
+        [Fact]
+        public void writedword_before_rom_end_fails()
+        {
+            var memory = Memory.Create(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 });
+            memory.AddReadOnlyRegion(4, 8);
+
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+                memory.WriteDWord(8, 0x87654321);
+            });
+        }
+
+        [Fact]
+        public void writedword_overlapping_rom_end_fails_1()
+        {
+            var memory = Memory.Create(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 });
+            memory.AddReadOnlyRegion(4, 8);
+
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+                memory.WriteDWord(9, 0x87654321);
+            });
+        }
+
+        [Fact]
+        public void writedword_overlapping_rom_end_fails_2()
+        {
+            var memory = Memory.Create(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 });
+            memory.AddReadOnlyRegion(4, 8);
+
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+                memory.WriteDWord(10, 0x87654321);
+            });
+        }
+
+        [Fact]
+        public void writedword_overlapping_rom_end_fails_3()
+        {
+            var memory = Memory.Create(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 });
+            memory.AddReadOnlyRegion(4, 8);
+
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+                memory.WriteDWord(11, 0x87654321);
+            });
+        }
+
+        [Fact]
+        public void writedword_after_rom_end_succeeds()
+        {
+            var memory = Memory.Create(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 });
+            memory.AddReadOnlyRegion(4, 8);
+
+            memory.WriteDWord(12, 0x87654321);
+            var dw = memory.ReadDWord(12);
+            Assert.Equal(0x87654321, dw);
         }
     }
 }
