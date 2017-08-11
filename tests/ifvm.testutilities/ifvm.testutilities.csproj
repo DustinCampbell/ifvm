@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard1.3</TargetFramework>
+    <RootNamespace>IFVM.TestUtilities</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="$(GamesPath)advent\advent.ulx">
+      <Link>Resources\advent.ulx</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="$(GamesPath)glulxercise\glulxercise.ulx">
+      <Link>Resources\glulxercise.ulx</Link>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>

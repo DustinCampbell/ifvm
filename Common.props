@@ -7,5 +7,6 @@
 
     <OutputPath>$([System.IO.Path]::GetFullPath('$(RepositoryRootDirectory)bin\$(Configuration)'))\</OutputPath>
     <BaseIntermediateOutputPath>$([System.IO.Path]::GetFullPath('$(RepositoryRootDirectory)bin\obj\$(MSBuildProjectName)'))\</BaseIntermediateOutputPath>
+    <GamesPath>$([System.IO.Path]::GetFullPath('$(RepositoryRootDirectory)games'))\</GamesPath>
   </PropertyGroup>
 </Project>

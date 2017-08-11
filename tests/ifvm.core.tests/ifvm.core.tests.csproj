@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\ifvm.core\ifvm.core.csproj" />
+    <ProjectReference Include="..\ifvm.testutilities\ifvm.testutilities.csproj" />
   </ItemGroup>
 
   <ItemGroup>
