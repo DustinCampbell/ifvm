@@ -21,6 +21,7 @@ namespace IFVM.Glulx
             }
 
             memory.Expand((int)this.Header.EndMem);
+            memory.AddReadOnlyRegion(0, (int)this.Header.RamStart);
         }
 
         private static void VerifyChecksum(Memory memory, uint expectedValue)
