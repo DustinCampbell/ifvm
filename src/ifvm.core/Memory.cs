@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace IFVM.Core
 {
@@ -17,6 +19,40 @@ namespace IFVM.Core
         }
 
         public static Memory Create(byte[] bytes) => new Memory(bytes);
+
+        public static async Task<Memory> CreateAsync(Stream stream)
+        {
+            if (stream == null)
+            {
+                throw new ArgumentNullException(nameof(stream));
+            }
+
+            var buffer = new byte[1024];
+            var read = 0;
+
+            int chunk;
+            while ((chunk = await stream.ReadAsync(buffer, read, buffer.Length - read)) > 0)
+            {
+                read += chunk;
+
+                if (read == buffer.Length)
+                {
+                    int nextByte = stream.ReadByte();
+                    if (nextByte == -1)
+                    {
+                        return new Memory(buffer);
+                    }
+
+                    Array.Resize(ref buffer, buffer.Length * 2);
+                    buffer[read] = (byte)nextByte;
+                    read++;
+                }
+            }
+
+            Array.Resize(ref buffer, read);
+
+            return new Memory(buffer);
+        }
 
         private void ValidateIndex(int index, int size)
         {
