@@ -5,25 +5,46 @@ namespace IFVM.Glulx
 {
     public class GlulxMachine : Machine
     {
-        public Version GlulxVersion { get; }
+        public GlulxHeader Header { get; }
 
         public GlulxMachine(Memory memory) : base(memory)
         {
-            // The header is the first 36 bytes of memory and cannot change.
+            this.Header = new GlulxHeader(memory);
 
-            var scanner = memory.CreateScanner(offset: 0);
+            VerifyChecksum(memory, this.Header.Checksum);
 
-            // The first 4 bytes are the magic number 47 6C 75 6C. In ASCII, that's 'Glul'
-            var magicNumber = scanner.NextDWord();
-            if (magicNumber != 0x476C756C)
+            // Initial the memory should have a size equal to ExtStart.
+            // We must expand it to EndMem.
+            if (this.Header.ExtStart != memory.Size)
             {
-                throw new InvalidOperationException("Not a valid glulx file!");
+                throw new InvalidOperationException($"Size expected to be {this.Header.ExtStart}");
             }
 
-            var majorVersion = scanner.NextWord();
-            var minorVersion = scanner.NextByte();
-            var minorMinorVersion = scanner.NextByte();
-            this.GlulxVersion = new Version(majorVersion, minorVersion, minorMinorVersion);
+            memory.Expand((int)this.Header.EndMem);
+        }
+
+        private static void VerifyChecksum(Memory memory, uint expectedValue)
+        {
+            var scanner = memory.CreateScanner(offset: 0);
+
+            var checksum = 0u;
+            while (scanner.CanReadNextDWord)
+            {
+                if (scanner.Offset == 0x20)
+                {
+                    // Note: We don't include the checksum value from the header.
+                    scanner.SkipDWord();
+                }
+                else
+                {
+                    checksum += scanner.NextDWord();
+                }
+            }
+
+            if (checksum != expectedValue)
+            {
+                throw new InvalidOperationException("Checksum does not match.");
+            }
         }
     }
 }

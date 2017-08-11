@@ -25,14 +25,14 @@ namespace IFVM.Core.Tests
         public void length_returns_zero_for_empty_byte_array()
         {
             var memory = Memory.Create(new byte[0]);
-            Assert.Equal(0, memory.Length);
+            Assert.Equal(0, memory.Size);
         }
 
         [Fact]
         public void length_returns_size_of_byte_array()
         {
             var memory = Memory.Create(new byte[] { 1, 2, 3, 4 });
-            Assert.Equal(4, memory.Length);
+            Assert.Equal(4, memory.Size);
         }
 
         [Fact]
@@ -61,7 +61,7 @@ namespace IFVM.Core.Tests
 
             Assert.Throws<ArgumentOutOfRangeException>(() =>
             {
-                memory.ReadByte(memory.Length);
+                memory.ReadByte(memory.Size);
             });
         }
 
@@ -69,7 +69,7 @@ namespace IFVM.Core.Tests
         public void readbyte_with_length_minus_one_returns_last_byte()
         {
             var memory = Memory.Create(new byte[] { 1, 2, 3, 4 });
-            var b = memory.ReadByte(memory.Length - 1);
+            var b = memory.ReadByte(memory.Size - 1);
             Assert.Equal(4, b);
         }
 
@@ -104,7 +104,7 @@ namespace IFVM.Core.Tests
 
             Assert.Throws<ArgumentOutOfRangeException>(() =>
             {
-                memory.WriteByte(memory.Length, 5);
+                memory.WriteByte(memory.Size, 5);
             });
         }
 
@@ -113,11 +113,11 @@ namespace IFVM.Core.Tests
         {
             var memory = Memory.Create(new byte[] { 1, 2, 3, 4 });
 
-            var b1 = memory.ReadByte(memory.Length - 1);
+            var b1 = memory.ReadByte(memory.Size - 1);
             Assert.Equal(4, b1);
 
-            memory.WriteByte(memory.Length - 1, 5);
-            var b2 = memory.ReadByte(memory.Length - 1);
+            memory.WriteByte(memory.Size - 1, 5);
+            var b2 = memory.ReadByte(memory.Size - 1);
             Assert.Equal(5, b2);
         }
 
@@ -147,7 +147,7 @@ namespace IFVM.Core.Tests
 
             Assert.Throws<ArgumentOutOfRangeException>(() =>
             {
-                memory.ReadWord(memory.Length);
+                memory.ReadWord(memory.Size);
             });
         }
 
@@ -158,7 +158,7 @@ namespace IFVM.Core.Tests
 
             Assert.Throws<ArgumentOutOfRangeException>(() =>
             {
-                memory.ReadWord(memory.Length - 1);
+                memory.ReadWord(memory.Size - 1);
             });
         }
 
@@ -166,7 +166,7 @@ namespace IFVM.Core.Tests
         public void readword_with_length_minus_two_returns_last_word()
         {
             var memory = Memory.Create(new byte[] { 0x12, 0x34, 0x56, 0x78 });
-            var w = memory.ReadWord(memory.Length - 2);
+            var w = memory.ReadWord(memory.Size - 2);
             Assert.Equal(0x5678, w);
         }
 
@@ -201,7 +201,7 @@ namespace IFVM.Core.Tests
 
             Assert.Throws<ArgumentOutOfRangeException>(() =>
             {
-                memory.WriteWord(memory.Length, 0x8765);
+                memory.WriteWord(memory.Size, 0x8765);
             });
         }
 
@@ -212,7 +212,7 @@ namespace IFVM.Core.Tests
 
             Assert.Throws<ArgumentOutOfRangeException>(() =>
             {
-                memory.WriteWord(memory.Length - 1, 0x8765);
+                memory.WriteWord(memory.Size - 1, 0x8765);
             });
         }
 
@@ -221,11 +221,11 @@ namespace IFVM.Core.Tests
         {
             var memory = Memory.Create(new byte[] { 0x12, 0x34, 0x56, 0x78 });
 
-            var w1 = memory.ReadWord(memory.Length - 2);
+            var w1 = memory.ReadWord(memory.Size - 2);
             Assert.Equal(0x5678, w1);
 
-            memory.WriteWord(memory.Length - 2, 0x7865);
-            var w2 = memory.ReadWord(memory.Length - 2);
+            memory.WriteWord(memory.Size - 2, 0x7865);
+            var w2 = memory.ReadWord(memory.Size - 2);
             Assert.Equal(0x7865, w2);
         }
 
@@ -255,7 +255,7 @@ namespace IFVM.Core.Tests
 
             Assert.Throws<ArgumentOutOfRangeException>(() =>
             {
-                memory.ReadDWord(memory.Length);
+                memory.ReadDWord(memory.Size);
             });
         }
 
@@ -266,7 +266,7 @@ namespace IFVM.Core.Tests
 
             Assert.Throws<ArgumentOutOfRangeException>(() =>
             {
-                memory.ReadDWord(memory.Length - 1);
+                memory.ReadDWord(memory.Size - 1);
             });
         }
 
@@ -277,7 +277,7 @@ namespace IFVM.Core.Tests
 
             Assert.Throws<ArgumentOutOfRangeException>(() =>
             {
-                memory.ReadDWord(memory.Length - 2);
+                memory.ReadDWord(memory.Size - 2);
             });
         }
 
@@ -288,7 +288,7 @@ namespace IFVM.Core.Tests
 
             Assert.Throws<ArgumentOutOfRangeException>(() =>
             {
-                memory.ReadDWord(memory.Length - 3);
+                memory.ReadDWord(memory.Size - 3);
             });
         }
 
@@ -296,7 +296,7 @@ namespace IFVM.Core.Tests
         public void readdword_with_length_minus_four_returns_last_dword()
         {
             var memory = Memory.Create(new byte[] { 0x12, 0x34, 0x56, 0x78, 0x9a, 0xbc, 0xde, 0xf0 });
-            var dw = memory.ReadDWord(memory.Length - 4);
+            var dw = memory.ReadDWord(memory.Size - 4);
             Assert.Equal(0x9abcdef0u, dw);
         }
 
@@ -331,7 +331,7 @@ namespace IFVM.Core.Tests
 
             Assert.Throws<ArgumentOutOfRangeException>(() =>
             {
-                memory.WriteDWord(memory.Length, 0x0fedcba9u);
+                memory.WriteDWord(memory.Size, 0x0fedcba9u);
             });
         }
 
@@ -342,7 +342,7 @@ namespace IFVM.Core.Tests
 
             Assert.Throws<ArgumentOutOfRangeException>(() =>
             {
-                memory.WriteDWord(memory.Length - 1, 0x0fedcba9u);
+                memory.WriteDWord(memory.Size - 1, 0x0fedcba9u);
             });
         }
 
@@ -353,7 +353,7 @@ namespace IFVM.Core.Tests
 
             Assert.Throws<ArgumentOutOfRangeException>(() =>
             {
-                memory.WriteDWord(memory.Length - 2, 0x0fedcba9u);
+                memory.WriteDWord(memory.Size - 2, 0x0fedcba9u);
             });
         }
 
@@ -364,7 +364,7 @@ namespace IFVM.Core.Tests
 
             Assert.Throws<ArgumentOutOfRangeException>(() =>
             {
-                memory.WriteDWord(memory.Length - 3, 0x0fedcba9u);
+                memory.WriteDWord(memory.Size - 3, 0x0fedcba9u);
             });
         }
 
@@ -373,11 +373,11 @@ namespace IFVM.Core.Tests
         {
             var memory = Memory.Create(new byte[] { 0x12, 0x34, 0x56, 0x78, 0x9a, 0xbc, 0xde, 0xf0 });
 
-            var dw1 = memory.ReadDWord(memory.Length - 4);
+            var dw1 = memory.ReadDWord(memory.Size - 4);
             Assert.Equal(0x9abcdef0u, dw1);
 
-            memory.WriteDWord(memory.Length - 4, 0x0fedcba9u);
-            var dw2 = memory.ReadDWord(memory.Length - 4);
+            memory.WriteDWord(memory.Size - 4, 0x0fedcba9u);
+            var dw2 = memory.ReadDWord(memory.Size - 4);
             Assert.Equal(0x0fedcba9u, dw2);
         }
     }

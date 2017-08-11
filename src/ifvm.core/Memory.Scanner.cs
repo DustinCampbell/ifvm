@@ -17,6 +17,10 @@ namespace IFVM.Core
                 this.offset = offset;
             }
 
+            public bool CanReadNextByte => offset < Memory.Size;
+            public bool CanReadNextWord => offset < Memory.Size - 1;
+            public bool CanReadNextDWord => offset < Memory.Size - 3;
+
             public byte NextByte()
             {
                 var result = this.Memory.ReadByte(offset);
@@ -36,6 +40,21 @@ namespace IFVM.Core
                 var result = this.Memory.ReadDWord(offset);
                 offset += 4;
                 return result;
+            }
+
+            public void SkipByte()
+            {
+                offset++;
+            }
+
+            public void SkipWord()
+            {
+                offset += 2;
+            }
+
+            public void SkipDWord()
+            {
+                offset += 4;
             }
         }
     }

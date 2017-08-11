@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using IFVM.Core;
 using IFVM.TestUtilities;
 using Xunit;
@@ -16,7 +15,19 @@ namespace IFVM.Glulx.Tests
                 var memory = await Memory.CreateAsync(stream);
                 var machine = new GlulxMachine(memory);
 
-                Assert.Equal(new Version("2.0.0"), machine.GlulxVersion);
+                Assert.Equal("2.0.0", machine.Header.Version.ToString());
+            }
+        }
+
+        [Fact]
+        public async Task advent_glulx_memlen_is_same_as_memory_size()
+        {
+            using (var stream = Resources.LoadResource(Resources.Glulx_Advent))
+            {
+                var memory = await Memory.CreateAsync(stream);
+                var machine = new GlulxMachine(memory);
+
+                Assert.Equal((int)machine.Header.EndMem, memory.Size);
             }
         }
 
@@ -28,7 +39,7 @@ namespace IFVM.Glulx.Tests
                 var memory = await Memory.CreateAsync(stream);
                 var machine = new GlulxMachine(memory);
 
-                Assert.Equal(new Version("3.1.3"), machine.GlulxVersion);
+                Assert.Equal("3.1.3", machine.Header.Version.ToString());
             }
         }
     }
