@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Tree Namespace="IFVM.Core.Ast">
+
+  <Usings>
+    <Using Name="System.Collections.Immutable"/>
+  </Usings>
+
+  <Nodes>
+    <Node Name="AstExpression" Base="AstNode" IsAbstract="true" />
+    <Node Name="AstStatement" Base="AstNode" IsAbstract="true"/>
+  </Nodes>
+
+</Tree>

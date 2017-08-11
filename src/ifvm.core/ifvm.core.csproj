@@ -5,4 +5,14 @@
     <RootNamespace>IFVM.Core</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <AstDefinition Include="Ast\AstDefinition.xml">
+      <SubType>Designer</SubType>
+    </AstDefinition>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Collections.Immutable" Version="1.3.1" />
+  </ItemGroup>
+
 </Project>

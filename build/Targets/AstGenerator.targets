@@ -1,0 +1,48 @@
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <!-- AST Generation -->
+
+  <PropertyGroup>
+    <AstGenerator>$([System.IO.Path]::GetFullPath('$(RepositoryRootDirectory)bin\Debug\net451\AstGenerator.exe'))</AstGenerator>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <AvailableItemName Include="AstDefinition" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <CompileDependsOn>GenerateAst;$(CompileDependsOn)</CompileDependsOn>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <CleanDependsOn>CleanAst;$(CleanDependsOn)</CleanDependsOn>
+  </PropertyGroup>
+
+  <Target
+    Name="GenerateAst"
+    Inputs="@(AstDefinition);$(AstGenerator)"
+    Outputs="@(AstDefinition -> '%(Identity).Generated$(DefaultLanguageSourceExtension)')">
+
+    <PropertyGroup>
+      <GeneratedAst>@(AstDefinition -> '%(Identity).Generated$(DefaultLanguageSourceExtension)')</GeneratedAst>
+    </PropertyGroup>
+
+    <Message Text="Generating AST: @(AstDefinition) -> $(GeneratedAst)" />
+
+    <Exec
+      Command='"$(AstGenerator)" @(AstDefinition) $(GeneratedAst)'
+      Outputs="$(GeneratedAst)">
+
+      <Output TaskParameter="Outputs" ItemName="FileWrites" />
+    </Exec>
+  </Target>
+
+  <Target Name="CleanAst">
+    <PropertyGroup>
+      <GeneratedAst>@(AstDefinition -> '%(Identity).Generated$(DefaultLanguageSourceExtension)')</GeneratedAst>
+    </PropertyGroup>
+
+    <Delete Files="$(GeneratedAst)"/>
+  </Target>
+
+ </Project>
