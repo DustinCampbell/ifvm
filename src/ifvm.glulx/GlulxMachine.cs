@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Threading.Tasks;
 using IFVM.Core;
 
 namespace IFVM.Glulx
@@ -7,21 +9,29 @@ namespace IFVM.Glulx
     {
         public GlulxHeader Header { get; }
 
-        public GlulxMachine(Memory memory) : base(memory)
+        private GlulxMachine(GlulxHeader header, Memory memory) : base(memory)
         {
-            this.Header = new GlulxHeader(memory);
+            this.Header = header;
+        }
 
-            VerifyChecksum(memory, this.Header.Checksum);
+        public static async Task<GlulxMachine> CreateAsync(Stream stream)
+        {
+            var memory = await Memory.CreateAsync(stream);
+            var header = new GlulxHeader(memory);
+
+            VerifyChecksum(memory, header.Checksum);
 
             // Initial the memory should have a size equal to ExtStart.
             // We must expand it to EndMem.
-            if (this.Header.ExtStart != memory.Size)
+            if (header.ExtStart != memory.Size)
             {
-                throw new InvalidOperationException($"Size expected to be {this.Header.ExtStart}");
+                throw new InvalidOperationException($"Size expected to be {header.ExtStart}");
             }
 
-            memory.Expand((int)this.Header.EndMem);
-            memory.AddReadOnlyRegion(0, (int)this.Header.RamStart);
+            memory.Expand((int)header.EndMem);
+            memory.AddReadOnlyRegion(0, (int)header.RamStart);
+
+            return new GlulxMachine(header, memory);
         }
 
         private static void VerifyChecksum(Memory memory, uint expectedValue)

@@ -2,7 +2,7 @@
 {
     public abstract class Machine
     {
-        protected readonly Memory Memory;
+        public Memory Memory { get; }
 
         protected Machine(Memory memory)
         {

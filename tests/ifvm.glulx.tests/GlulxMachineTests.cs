@@ -12,8 +12,7 @@ namespace IFVM.Glulx.Tests
         {
             using (var stream = Resources.LoadResource(Resources.Glulx_Advent))
             {
-                var memory = await Memory.CreateAsync(stream);
-                var machine = new GlulxMachine(memory);
+                var machine = await GlulxMachine.CreateAsync(stream);
 
                 Assert.Equal("2.0.0", machine.Header.Version.ToString());
             }
@@ -24,10 +23,9 @@ namespace IFVM.Glulx.Tests
         {
             using (var stream = Resources.LoadResource(Resources.Glulx_Advent))
             {
-                var memory = await Memory.CreateAsync(stream);
-                var machine = new GlulxMachine(memory);
+                var machine = await GlulxMachine.CreateAsync(stream);
 
-                Assert.Equal((int)machine.Header.EndMem, memory.Size);
+                Assert.Equal((int)machine.Header.EndMem, machine.Memory.Size);
             }
         }
 
@@ -36,8 +34,7 @@ namespace IFVM.Glulx.Tests
         {
             using (var stream = Resources.LoadResource(Resources.Glulx_Glulxercise))
             {
-                var memory = await Memory.CreateAsync(stream);
-                var machine = new GlulxMachine(memory);
+                var machine = await GlulxMachine.CreateAsync(stream);
 
                 Assert.Equal("3.1.3", machine.Header.Version.ToString());
             }
