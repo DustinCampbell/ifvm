@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard1.3</TargetFramework>
-    <RootNamespace>IFVM.Core</RootNamespace>
+    <RootNamespace>IFVM</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

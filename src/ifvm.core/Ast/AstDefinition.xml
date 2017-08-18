@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<Tree Namespace="IFVM.Core.Ast">
+<Tree Namespace="IFVM.Ast">
 
   <Usings>
     <Using Name="System.Collections.Immutable"/>

@@ -2,7 +2,7 @@
 
 using System.Collections.Immutable;
 
-namespace IFVM.Core.Ast
+namespace IFVM.Ast
 {
     public enum AstNodeKind
     {

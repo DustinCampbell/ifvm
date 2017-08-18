@@ -2,7 +2,7 @@
 using System.IO;
 using System.Threading.Tasks;
 
-namespace IFVM.Core.Extensions
+namespace IFVM.Extensions
 {
     public static class StreamExtensions
     {

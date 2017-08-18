@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 
-namespace IFVM.Core
+namespace IFVM.Utilities
 {
     public class ObjectPool<T> where T : class
     {

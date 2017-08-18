@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using IFVM.Core.Extensions;
+using IFVM.Utilities;
+using IFVM.Extensions;
 
 namespace IFVM.Core
 {
