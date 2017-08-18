@@ -9,7 +9,7 @@ namespace IFVM.Glulx
     {
         public GlulxHeader Header { get; }
 
-        private GlulxMachine(GlulxHeader header, Memory memory) : base(memory)
+        private GlulxMachine(GlulxHeader header, Memory memory, Stack stack) : base(memory, stack)
         {
             this.Header = header;
         }
@@ -31,7 +31,14 @@ namespace IFVM.Glulx
             memory.Expand((int)header.EndMem);
             memory.AddReadOnlyRegion(0, (int)header.RamStart);
 
-            return new GlulxMachine(header, memory);
+            if (header.StackSize % 256 != 0)
+            {
+                throw new InvalidOperationException("Stack size must be a multiple of 256");
+            }
+
+            var stack = new Stack((int)header.StackSize);
+
+            return new GlulxMachine(header, memory, stack);
         }
 
         private static void VerifyChecksum(Memory memory, uint expectedValue)

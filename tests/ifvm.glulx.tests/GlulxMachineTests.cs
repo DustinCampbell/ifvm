@@ -30,6 +30,17 @@ namespace IFVM.Glulx.Tests
         }
 
         [Fact]
+        public async Task advent_glulx_stacksize_is_same_as_stack_size()
+        {
+            using (var stream = Resources.LoadResource(Resources.Glulx_Advent))
+            {
+                var machine = await GlulxMachine.CreateAsync(stream);
+
+                Assert.Equal((int)machine.Header.StackSize, machine.Stack.Size);
+            }
+        }
+
+        [Fact]
         public async Task glulxercise_glulx_version_is_3_1_3()
         {
             using (var stream = Resources.LoadResource(Resources.Glulx_Glulxercise))
