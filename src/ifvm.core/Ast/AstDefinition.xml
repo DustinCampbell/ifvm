@@ -6,8 +6,35 @@
   </Usings>
 
   <Nodes>
+    
+    <!-- simple nodes -->
+
+    <Node Name="AstLabel" Base="AstNode">
+      <Field Name="Index" Type="int" DoNotVisit="true" />
+    </Node>
+
+    <Node Name="AstLocal" Base="AstNode">
+      <Field Name="Index" Type="AstExpression" />
+      <Field Name="Size" Type="ValueSize" DoNotVisit="true" />
+    </Node>
+    
+    <!-- expressions -->
+
     <Node Name="AstExpression" Base="AstNode" IsAbstract="true" />
+
+    <Node Name="AstConstantExpression" Base="AstExpression" DontCreateFactoryMethod="true">
+      <Field Name="Value" Type="int" DoNotVisit="true" />
+    </Node>
+    
+    <!-- statements -->
+    
     <Node Name="AstStatement" Base="AstNode" IsAbstract="true"/>
+
+    <Node Name="AstWriteLocalStatement" Base="AstStatement">
+      <Field Name="Local" Type="AstLocal" />
+      <Field Name="Value" Type="AstExpression" />
+    </Node>
+    
   </Nodes>
 
 </Tree>
