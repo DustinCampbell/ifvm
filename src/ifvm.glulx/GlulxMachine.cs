@@ -14,7 +14,7 @@ namespace IFVM.Glulx
         private GlulxMachine(GlulxHeader header, Memory memory, Stack stack) : base(memory, stack)
         {
             this.Header = header;
-            this.StartFunction = Function.Read(memory, (int)header.StartFunc, (int)header.RamStart);
+            this.StartFunction = ReadFunction((int)header.StartFunc);
         }
 
         public static async Task<GlulxMachine> CreateAsync(Stream stream)
@@ -66,6 +66,11 @@ namespace IFVM.Glulx
             {
                 throw new InvalidOperationException("Checksum does not match.");
             }
+        }
+
+        public Function ReadFunction(int address)
+        {
+            return Function.Read(this.Memory, address, (int)this.Header.RamStart);
         }
     }
 }

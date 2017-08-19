@@ -35,11 +35,24 @@
       <Field Name="Value" Type="int" DoNotVisit="true" />
     </Node>
 
+    <Node Name="AstConversionExpression" Base="AstExpression">
+      <Field Name="Expression" Type="AstExpression" />
+      <Field Name="Size" Type="ValueSize" DoNotVisit="true" />
+      <Field Name="Signed" Type="bool" DoNotVisit="true" />
+    </Node>
+
     <Node Name="AstAddExpression" Base="AstBinaryExpression" DontCreateFactoryMethod="true" />
     <Node Name="AstSubtractExpression" Base="AstBinaryExpression" DontCreateFactoryMethod="true" />
     <Node Name="AstMultiplyExpression" Base="AstBinaryExpression" DontCreateFactoryMethod="true" />
     <Node Name="AstDivideExpression" Base="AstBinaryExpression" DontCreateFactoryMethod="true" />
     <Node Name="AstModuloExpression" Base="AstBinaryExpression" DontCreateFactoryMethod="true" />
+
+    <Node Name="AstEqualToExpression" Base="AstBinaryExpression" />
+    <Node Name="AstNotEqualToExpression" Base="AstBinaryExpression" />
+    <Node Name="AstLessThanExpression" Base="AstBinaryExpression" />
+    <Node Name="AstLessThanOrEqualToExpression" Base="AstBinaryExpression" />
+    <Node Name="AstGreaterThanExpression" Base="AstBinaryExpression" />
+    <Node Name="AstGreaterThanOrEqualToExpression" Base="AstBinaryExpression" />
 
     <Node Name="AstCallExpression" Base="AstExpression">
       <Field Name="Address" Type="AstExpression" />
@@ -70,9 +83,24 @@
       <Field Name="Expression" Type="AstExpression" />
     </Node>
 
+    <Node Name="AstLabelStatement" Base="AstStatement">
+      <Field Name="Label" Type="AstLabel" />
+    </Node>
+
+    <Node Name="AstBranchStatement" Base="AstStatement">
+      <Field Name="Condition" Type="AstExpression" />
+      <Field Name="Statement" Type="AstStatement" />
+    </Node>
+
+    <Node Name="AstJumpStatement" Base="AstStatement">
+      <Field Name="Label" Type="AstLabel" />
+    </Node>
+
     <Node Name="AstReturnStatement" Base="AstStatement">
       <Field Name="Expression" Type="AstExpression" />
     </Node>
+
+    <Node Name="AstQuitStatement" Base="AstStatement" />
 
     <Node Name="AstStackPushStatement" Base="AstStatement">
       <Field Name="Value" Type="AstExpression" />
@@ -88,6 +116,20 @@
       <Field Name="Value" Type="AstExpression" />
       <Field Name="Size" Type="ValueSize" DoNotVisit="true" />
     </Node>
+
+    <Node Name="AstOutputCharStatement" Base="AstStatement">
+      <Field Name="Character" Type="AstExpression" />
+    </Node>
+    
+    <Node Name="AstOutputNumberStatement" Base="AstStatement">
+      <Field Name="Number" Type="AstExpression" />
+    </Node>
+
+    <Node Name="AstOutputStringStatement" Base="AstStatement">
+      <Field Name="Address" Type="AstExpression" />
+    </Node>
+
+    <Node Name="AstRestoreUndoStatement" Base="AstStatement" />
 
   </Nodes>
 

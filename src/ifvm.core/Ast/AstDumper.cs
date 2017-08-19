@@ -9,7 +9,7 @@ namespace IFVM.Ast
         private readonly StringBuilder builder;
 
         private int indentSize = 4;
-        private int indentLevel = 0;
+        private int indentLevel = 1;
         private bool needsIndent = true;
         private bool allowParentheses = true;
 
@@ -135,6 +135,17 @@ namespace IFVM.Ast
             });
         }
 
+        public override void VisitBranchStatement(AstBranchStatement node)
+        {
+            Append("if ");
+            Visit(node.Condition);
+            Append(" then ");
+            IncreaseIndent();
+            AppendLine();
+            Visit(node.Statement);
+            DecreaseIndent();
+        }
+
         public override void VisitCallExpression(AstCallExpression node)
         {
             Append("call ");
@@ -165,6 +176,50 @@ namespace IFVM.Ast
             }
         }
 
+        public override void VisitConversionExpression(AstConversionExpression node)
+        {
+            switch (node.Size)
+            {
+                case ValueSize.Byte:
+                    if (node.Signed)
+                    {
+                        Append("conv.i1");
+                    }
+                    else
+                    {
+                        Append("conv.u1");
+                    }
+
+                    break;
+
+                case ValueSize.Word:
+                    if (node.Signed)
+                    {
+                        Append("conv.i2");
+                    }
+                    else
+                    {
+                        Append("conv.u2");
+                    }
+
+                    break;
+
+                case ValueSize.DWord:
+                    if (node.Signed)
+                    {
+                        Append("conv.i4");
+                    }
+                    else
+                    {
+                        Append("conv.u4");
+                    }
+
+                    break;
+            }
+
+            ParenthesizedList(node.Expression);
+        }
+
         public override void VisitDivideExpression(AstDivideExpression node)
         {
             Parenthesize(() =>
@@ -175,14 +230,78 @@ namespace IFVM.Ast
             });
         }
 
+        public override void VisitEqualToExpression(AstEqualToExpression node)
+        {
+            Parenthesize(() =>
+            {
+                Visit(node.Left);
+                Append(" == ");
+                Visit(node.Right);
+            });
+        }
+
         public override void VisitExpressionStatement(AstExpressionStatement node)
         {
             Visit(node.Expression);
         }
 
+        public override void VisitGreaterThanExpression(AstGreaterThanExpression node)
+        {
+            Parenthesize(() =>
+            {
+                Visit(node.Left);
+                Append(" > ");
+                Visit(node.Right);
+            });
+        }
+
+        public override void VisitGreaterThanOrEqualToExpression(AstGreaterThanOrEqualToExpression node)
+        {
+            Parenthesize(() =>
+            {
+                Visit(node.Left);
+                Append(" >= ");
+                Visit(node.Right);
+            });
+        }
+
+        public override void VisitJumpStatement(AstJumpStatement node)
+        {
+            Append("jump ");
+            Visit(node.Label);
+        }
+
+        public override void VisitLabelStatement(AstLabelStatement node)
+        {
+            DecreaseIndent();
+            Visit(node.Label);
+            Append(":");
+            IncreaseIndent();
+        }
+
         public override void VisitLabel(AstLabel node)
         {
             Append($"label_{node.Index}");
+        }
+
+        public override void VisitLessThanExpression(AstLessThanExpression node)
+        {
+            Parenthesize(() =>
+            {
+                Visit(node.Left);
+                Append(" < ");
+                Visit(node.Right);
+            });
+        }
+
+        public override void VisitLessThanOrEqualToExpression(AstLessThanOrEqualToExpression node)
+        {
+            Parenthesize(() =>
+            {
+                Visit(node.Left);
+                Append(" <= ");
+                Visit(node.Right);
+            });
         }
 
         public override void VisitLocal(AstLocal node)
@@ -220,6 +339,39 @@ namespace IFVM.Ast
             });
         }
 
+        public override void VisitNotEqualToExpression(AstNotEqualToExpression node)
+        {
+            Parenthesize(() =>
+            {
+                Visit(node.Left);
+                Append(" != ");
+                Visit(node.Right);
+            });
+        }
+
+        public override void VisitOutputCharStatement(AstOutputCharStatement node)
+        {
+            Append("output-char ");
+            Visit(node.Character);
+        }
+
+        public override void VisitOutputNumberStatement(AstOutputNumberStatement node)
+        {
+            Append("output-num ");
+            Visit(node.Number);
+        }
+
+        public override void VisitOutputStringStatement(AstOutputStringStatement node)
+        {
+            Append("output-string ");
+            Visit(node.Address);
+        }
+
+        public override void VisitQuitStatement(AstQuitStatement node)
+        {
+            Append("quit");
+        }
+
         public override void VisitReadLocalExpression(AstReadLocalExpression node)
         {
             Visit(node.Local);
@@ -241,6 +393,11 @@ namespace IFVM.Ast
             }
 
             ParenthesizedList(node.Address);
+        }
+
+        public override void VisitRestoreUndoStatement(AstRestoreUndoStatement node)
+        {
+            Append("restore-undo");
         }
 
         public override void VisitReturnStatement(AstReturnStatement node)

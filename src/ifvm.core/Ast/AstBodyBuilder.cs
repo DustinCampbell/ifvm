@@ -1,8 +1,10 @@
-﻿using System.Collections.Immutable;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 
 namespace IFVM.Ast
 {
-    public class AstBodyBuilder
+    public partial class AstBodyBuilder
     {
         private readonly ImmutableList<AstLabel>.Builder labels;
         private readonly ImmutableList<AstLocal>.Builder locals;
@@ -13,6 +15,7 @@ namespace IFVM.Ast
             this.labels = ImmutableList.CreateBuilder<AstLabel>();
             this.locals = ImmutableList.CreateBuilder<AstLocal>();
             this.statements = ImmutableList.CreateBuilder<AstStatement>();
+            this.markedLabels = new List<bool>();
         }
 
         public void AddStatement(AstStatement statement)
@@ -40,6 +43,12 @@ namespace IFVM.Ast
                 AstFactory.WriteLocalStatement(local, value));
         }
 
+        public void Quit()
+        {
+            AddStatement(
+                AstFactory.QuitStatement());
+        }
+
         public void Return(AstExpression expression)
         {
             AddStatement(
@@ -47,9 +56,18 @@ namespace IFVM.Ast
         }
 
         public AstBody ToBody()
-            => new AstBody(
+        {
+            if (this.markedLabels.Contains(false))
+            {
+                throw new InvalidOperationException("There are labels that have not been marked.");
+            }
+
+            PruneAndNormalizeLabels();
+
+            return new AstBody(
                 this.labels.ToImmutable(),
                 this.locals.ToImmutable(),
                 this.statements.ToImmutable());
+        }
     }
 }

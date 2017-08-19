@@ -9,21 +9,36 @@ namespace IFVM.Ast
         Label,
         Local,
         ConstantExpression,
+        ConversionExpression,
         AddExpression,
         SubtractExpression,
         MultiplyExpression,
         DivideExpression,
         ModuloExpression,
+        EqualToExpression,
+        NotEqualToExpression,
+        LessThanExpression,
+        LessThanOrEqualToExpression,
+        GreaterThanExpression,
+        GreaterThanOrEqualToExpression,
         CallExpression,
         CallWithArgCountExpression,
         StackPopExpression,
         ReadLocalExpression,
         ReadMemoryExpression,
         ExpressionStatement,
+        LabelStatement,
+        BranchStatement,
+        JumpStatement,
         ReturnStatement,
+        QuitStatement,
         StackPushStatement,
         WriteLocalStatement,
         WriteMemoryStatement,
+        OutputCharStatement,
+        OutputNumberStatement,
+        OutputStringStatement,
+        RestoreUndoStatement,
     }
 
     public partial class AstLabel : AstNode
@@ -171,6 +186,54 @@ namespace IFVM.Ast
         }
     }
 
+    public partial class AstConversionExpression : AstExpression
+    {
+        private readonly AstExpression expression;
+        private readonly ValueSize size;
+        private readonly bool signed;
+
+        internal AstConversionExpression(AstExpression expression, ValueSize size, bool signed) : base(AstNodeKind.ConversionExpression)
+        {
+            this.expression = expression;
+            this.size = size;
+            this.signed = signed;
+        }
+
+        public AstExpression Expression
+        {
+            get { return this.expression; }
+        }
+
+        public ValueSize Size
+        {
+            get { return this.size; }
+        }
+
+        public bool Signed
+        {
+            get { return this.signed; }
+        }
+
+        public override AstNode Accept(AstRewriter rewriter)
+        {
+            return rewriter.VisitConversionExpression(this);
+        }
+
+        public override void Accept(AstVisitor visitor)
+        {
+            visitor.VisitConversionExpression(this);
+        }
+
+        public override ImmutableList<AstNode> ChildNodes()
+        {
+            var builder = ImmutableList.CreateBuilder<AstNode>();
+
+            builder.Add(Expression);
+
+            return builder.ToImmutable();
+        }
+    }
+
     public partial class AstAddExpression : AstBinaryExpression
     {
         internal AstAddExpression(AstExpression left, AstExpression right) : base(AstNodeKind.AddExpression, left, right)
@@ -293,6 +356,168 @@ namespace IFVM.Ast
         public override void Accept(AstVisitor visitor)
         {
             visitor.VisitModuloExpression(this);
+        }
+
+        public override ImmutableList<AstNode> ChildNodes()
+        {
+            var builder = ImmutableList.CreateBuilder<AstNode>();
+
+            builder.Add(Left);
+            builder.Add(Right);
+
+            return builder.ToImmutable();
+        }
+    }
+
+    public partial class AstEqualToExpression : AstBinaryExpression
+    {
+        internal AstEqualToExpression(AstExpression left, AstExpression right) : base(AstNodeKind.EqualToExpression, left, right)
+        {
+        }
+
+        public override AstNode Accept(AstRewriter rewriter)
+        {
+            return rewriter.VisitEqualToExpression(this);
+        }
+
+        public override void Accept(AstVisitor visitor)
+        {
+            visitor.VisitEqualToExpression(this);
+        }
+
+        public override ImmutableList<AstNode> ChildNodes()
+        {
+            var builder = ImmutableList.CreateBuilder<AstNode>();
+
+            builder.Add(Left);
+            builder.Add(Right);
+
+            return builder.ToImmutable();
+        }
+    }
+
+    public partial class AstNotEqualToExpression : AstBinaryExpression
+    {
+        internal AstNotEqualToExpression(AstExpression left, AstExpression right) : base(AstNodeKind.NotEqualToExpression, left, right)
+        {
+        }
+
+        public override AstNode Accept(AstRewriter rewriter)
+        {
+            return rewriter.VisitNotEqualToExpression(this);
+        }
+
+        public override void Accept(AstVisitor visitor)
+        {
+            visitor.VisitNotEqualToExpression(this);
+        }
+
+        public override ImmutableList<AstNode> ChildNodes()
+        {
+            var builder = ImmutableList.CreateBuilder<AstNode>();
+
+            builder.Add(Left);
+            builder.Add(Right);
+
+            return builder.ToImmutable();
+        }
+    }
+
+    public partial class AstLessThanExpression : AstBinaryExpression
+    {
+        internal AstLessThanExpression(AstExpression left, AstExpression right) : base(AstNodeKind.LessThanExpression, left, right)
+        {
+        }
+
+        public override AstNode Accept(AstRewriter rewriter)
+        {
+            return rewriter.VisitLessThanExpression(this);
+        }
+
+        public override void Accept(AstVisitor visitor)
+        {
+            visitor.VisitLessThanExpression(this);
+        }
+
+        public override ImmutableList<AstNode> ChildNodes()
+        {
+            var builder = ImmutableList.CreateBuilder<AstNode>();
+
+            builder.Add(Left);
+            builder.Add(Right);
+
+            return builder.ToImmutable();
+        }
+    }
+
+    public partial class AstLessThanOrEqualToExpression : AstBinaryExpression
+    {
+        internal AstLessThanOrEqualToExpression(AstExpression left, AstExpression right) : base(AstNodeKind.LessThanOrEqualToExpression, left, right)
+        {
+        }
+
+        public override AstNode Accept(AstRewriter rewriter)
+        {
+            return rewriter.VisitLessThanOrEqualToExpression(this);
+        }
+
+        public override void Accept(AstVisitor visitor)
+        {
+            visitor.VisitLessThanOrEqualToExpression(this);
+        }
+
+        public override ImmutableList<AstNode> ChildNodes()
+        {
+            var builder = ImmutableList.CreateBuilder<AstNode>();
+
+            builder.Add(Left);
+            builder.Add(Right);
+
+            return builder.ToImmutable();
+        }
+    }
+
+    public partial class AstGreaterThanExpression : AstBinaryExpression
+    {
+        internal AstGreaterThanExpression(AstExpression left, AstExpression right) : base(AstNodeKind.GreaterThanExpression, left, right)
+        {
+        }
+
+        public override AstNode Accept(AstRewriter rewriter)
+        {
+            return rewriter.VisitGreaterThanExpression(this);
+        }
+
+        public override void Accept(AstVisitor visitor)
+        {
+            visitor.VisitGreaterThanExpression(this);
+        }
+
+        public override ImmutableList<AstNode> ChildNodes()
+        {
+            var builder = ImmutableList.CreateBuilder<AstNode>();
+
+            builder.Add(Left);
+            builder.Add(Right);
+
+            return builder.ToImmutable();
+        }
+    }
+
+    public partial class AstGreaterThanOrEqualToExpression : AstBinaryExpression
+    {
+        internal AstGreaterThanOrEqualToExpression(AstExpression left, AstExpression right) : base(AstNodeKind.GreaterThanOrEqualToExpression, left, right)
+        {
+        }
+
+        public override AstNode Accept(AstRewriter rewriter)
+        {
+            return rewriter.VisitGreaterThanOrEqualToExpression(this);
+        }
+
+        public override void Accept(AstVisitor visitor)
+        {
+            visitor.VisitGreaterThanOrEqualToExpression(this);
         }
 
         public override ImmutableList<AstNode> ChildNodes()
@@ -531,6 +756,116 @@ namespace IFVM.Ast
         }
     }
 
+    public partial class AstLabelStatement : AstStatement
+    {
+        private readonly AstLabel label;
+
+        internal AstLabelStatement(AstLabel label) : base(AstNodeKind.LabelStatement)
+        {
+            this.label = label;
+        }
+
+        public AstLabel Label
+        {
+            get { return this.label; }
+        }
+
+        public override AstNode Accept(AstRewriter rewriter)
+        {
+            return rewriter.VisitLabelStatement(this);
+        }
+
+        public override void Accept(AstVisitor visitor)
+        {
+            visitor.VisitLabelStatement(this);
+        }
+
+        public override ImmutableList<AstNode> ChildNodes()
+        {
+            var builder = ImmutableList.CreateBuilder<AstNode>();
+
+            builder.Add(Label);
+
+            return builder.ToImmutable();
+        }
+    }
+
+    public partial class AstBranchStatement : AstStatement
+    {
+        private readonly AstExpression condition;
+        private readonly AstStatement statement;
+
+        internal AstBranchStatement(AstExpression condition, AstStatement statement) : base(AstNodeKind.BranchStatement)
+        {
+            this.condition = condition;
+            this.statement = statement;
+        }
+
+        public AstExpression Condition
+        {
+            get { return this.condition; }
+        }
+
+        public AstStatement Statement
+        {
+            get { return this.statement; }
+        }
+
+        public override AstNode Accept(AstRewriter rewriter)
+        {
+            return rewriter.VisitBranchStatement(this);
+        }
+
+        public override void Accept(AstVisitor visitor)
+        {
+            visitor.VisitBranchStatement(this);
+        }
+
+        public override ImmutableList<AstNode> ChildNodes()
+        {
+            var builder = ImmutableList.CreateBuilder<AstNode>();
+
+            builder.Add(Condition);
+            builder.Add(Statement);
+
+            return builder.ToImmutable();
+        }
+    }
+
+    public partial class AstJumpStatement : AstStatement
+    {
+        private readonly AstLabel label;
+
+        internal AstJumpStatement(AstLabel label) : base(AstNodeKind.JumpStatement)
+        {
+            this.label = label;
+        }
+
+        public AstLabel Label
+        {
+            get { return this.label; }
+        }
+
+        public override AstNode Accept(AstRewriter rewriter)
+        {
+            return rewriter.VisitJumpStatement(this);
+        }
+
+        public override void Accept(AstVisitor visitor)
+        {
+            visitor.VisitJumpStatement(this);
+        }
+
+        public override ImmutableList<AstNode> ChildNodes()
+        {
+            var builder = ImmutableList.CreateBuilder<AstNode>();
+
+            builder.Add(Label);
+
+            return builder.ToImmutable();
+        }
+    }
+
     public partial class AstReturnStatement : AstStatement
     {
         private readonly AstExpression expression;
@@ -562,6 +897,28 @@ namespace IFVM.Ast
             builder.Add(Expression);
 
             return builder.ToImmutable();
+        }
+    }
+
+    public partial class AstQuitStatement : AstStatement
+    {
+        internal AstQuitStatement() : base(AstNodeKind.QuitStatement)
+        {
+        }
+
+        public override AstNode Accept(AstRewriter rewriter)
+        {
+            return rewriter.VisitQuitStatement(this);
+        }
+
+        public override void Accept(AstVisitor visitor)
+        {
+            visitor.VisitQuitStatement(this);
+        }
+
+        public override ImmutableList<AstNode> ChildNodes()
+        {
+            return ImmutableList<AstNode>.Empty;
         }
     }
 
@@ -690,6 +1047,130 @@ namespace IFVM.Ast
         }
     }
 
+    public partial class AstOutputCharStatement : AstStatement
+    {
+        private readonly AstExpression character;
+
+        internal AstOutputCharStatement(AstExpression character) : base(AstNodeKind.OutputCharStatement)
+        {
+            this.character = character;
+        }
+
+        public AstExpression Character
+        {
+            get { return this.character; }
+        }
+
+        public override AstNode Accept(AstRewriter rewriter)
+        {
+            return rewriter.VisitOutputCharStatement(this);
+        }
+
+        public override void Accept(AstVisitor visitor)
+        {
+            visitor.VisitOutputCharStatement(this);
+        }
+
+        public override ImmutableList<AstNode> ChildNodes()
+        {
+            var builder = ImmutableList.CreateBuilder<AstNode>();
+
+            builder.Add(Character);
+
+            return builder.ToImmutable();
+        }
+    }
+
+    public partial class AstOutputNumberStatement : AstStatement
+    {
+        private readonly AstExpression number;
+
+        internal AstOutputNumberStatement(AstExpression number) : base(AstNodeKind.OutputNumberStatement)
+        {
+            this.number = number;
+        }
+
+        public AstExpression Number
+        {
+            get { return this.number; }
+        }
+
+        public override AstNode Accept(AstRewriter rewriter)
+        {
+            return rewriter.VisitOutputNumberStatement(this);
+        }
+
+        public override void Accept(AstVisitor visitor)
+        {
+            visitor.VisitOutputNumberStatement(this);
+        }
+
+        public override ImmutableList<AstNode> ChildNodes()
+        {
+            var builder = ImmutableList.CreateBuilder<AstNode>();
+
+            builder.Add(Number);
+
+            return builder.ToImmutable();
+        }
+    }
+
+    public partial class AstOutputStringStatement : AstStatement
+    {
+        private readonly AstExpression address;
+
+        internal AstOutputStringStatement(AstExpression address) : base(AstNodeKind.OutputStringStatement)
+        {
+            this.address = address;
+        }
+
+        public AstExpression Address
+        {
+            get { return this.address; }
+        }
+
+        public override AstNode Accept(AstRewriter rewriter)
+        {
+            return rewriter.VisitOutputStringStatement(this);
+        }
+
+        public override void Accept(AstVisitor visitor)
+        {
+            visitor.VisitOutputStringStatement(this);
+        }
+
+        public override ImmutableList<AstNode> ChildNodes()
+        {
+            var builder = ImmutableList.CreateBuilder<AstNode>();
+
+            builder.Add(Address);
+
+            return builder.ToImmutable();
+        }
+    }
+
+    public partial class AstRestoreUndoStatement : AstStatement
+    {
+        internal AstRestoreUndoStatement() : base(AstNodeKind.RestoreUndoStatement)
+        {
+        }
+
+        public override AstNode Accept(AstRewriter rewriter)
+        {
+            return rewriter.VisitRestoreUndoStatement(this);
+        }
+
+        public override void Accept(AstVisitor visitor)
+        {
+            visitor.VisitRestoreUndoStatement(this);
+        }
+
+        public override ImmutableList<AstNode> ChildNodes()
+        {
+            return ImmutableList<AstNode>.Empty;
+        }
+    }
+
     public abstract partial class AstVisitor
     {
         public virtual void Visit(AstNode node)
@@ -718,6 +1199,11 @@ namespace IFVM.Ast
         {
         }
 
+        public virtual void VisitConversionExpression(AstConversionExpression node)
+        {
+            Visit(node.Expression);
+        }
+
         public virtual void VisitAddExpression(AstAddExpression node)
         {
             Visit(node.Left);
@@ -743,6 +1229,42 @@ namespace IFVM.Ast
         }
 
         public virtual void VisitModuloExpression(AstModuloExpression node)
+        {
+            Visit(node.Left);
+            Visit(node.Right);
+        }
+
+        public virtual void VisitEqualToExpression(AstEqualToExpression node)
+        {
+            Visit(node.Left);
+            Visit(node.Right);
+        }
+
+        public virtual void VisitNotEqualToExpression(AstNotEqualToExpression node)
+        {
+            Visit(node.Left);
+            Visit(node.Right);
+        }
+
+        public virtual void VisitLessThanExpression(AstLessThanExpression node)
+        {
+            Visit(node.Left);
+            Visit(node.Right);
+        }
+
+        public virtual void VisitLessThanOrEqualToExpression(AstLessThanOrEqualToExpression node)
+        {
+            Visit(node.Left);
+            Visit(node.Right);
+        }
+
+        public virtual void VisitGreaterThanExpression(AstGreaterThanExpression node)
+        {
+            Visit(node.Left);
+            Visit(node.Right);
+        }
+
+        public virtual void VisitGreaterThanOrEqualToExpression(AstGreaterThanOrEqualToExpression node)
         {
             Visit(node.Left);
             Visit(node.Right);
@@ -779,9 +1301,29 @@ namespace IFVM.Ast
             Visit(node.Expression);
         }
 
+        public virtual void VisitLabelStatement(AstLabelStatement node)
+        {
+            Visit(node.Label);
+        }
+
+        public virtual void VisitBranchStatement(AstBranchStatement node)
+        {
+            Visit(node.Condition);
+            Visit(node.Statement);
+        }
+
+        public virtual void VisitJumpStatement(AstJumpStatement node)
+        {
+            Visit(node.Label);
+        }
+
         public virtual void VisitReturnStatement(AstReturnStatement node)
         {
             Visit(node.Expression);
+        }
+
+        public virtual void VisitQuitStatement(AstQuitStatement node)
+        {
         }
 
         public virtual void VisitStackPushStatement(AstStackPushStatement node)
@@ -799,6 +1341,25 @@ namespace IFVM.Ast
         {
             Visit(node.Address);
             Visit(node.Value);
+        }
+
+        public virtual void VisitOutputCharStatement(AstOutputCharStatement node)
+        {
+            Visit(node.Character);
+        }
+
+        public virtual void VisitOutputNumberStatement(AstOutputNumberStatement node)
+        {
+            Visit(node.Number);
+        }
+
+        public virtual void VisitOutputStringStatement(AstOutputStringStatement node)
+        {
+            Visit(node.Address);
+        }
+
+        public virtual void VisitRestoreUndoStatement(AstRestoreUndoStatement node)
+        {
         }
     }
 
@@ -826,6 +1387,15 @@ namespace IFVM.Ast
         public virtual AstNode VisitConstantExpression(AstConstantExpression node)
         {
             return node;
+        }
+
+        public virtual AstNode VisitConversionExpression(AstConversionExpression node)
+        {
+            var expression = (AstExpression)Visit(node.Expression);
+
+            return expression != node.Expression
+                ? new AstConversionExpression(expression, node.Size, node.Signed)
+                : node;
         }
 
         public virtual AstNode VisitAddExpression(AstAddExpression node)
@@ -875,6 +1445,66 @@ namespace IFVM.Ast
 
             return left != node.Left || right != node.Right
                 ? new AstModuloExpression(left, right)
+                : node;
+        }
+
+        public virtual AstNode VisitEqualToExpression(AstEqualToExpression node)
+        {
+            var left = (AstExpression)Visit(node.Left);
+            var right = (AstExpression)Visit(node.Right);
+
+            return left != node.Left || right != node.Right
+                ? new AstEqualToExpression(left, right)
+                : node;
+        }
+
+        public virtual AstNode VisitNotEqualToExpression(AstNotEqualToExpression node)
+        {
+            var left = (AstExpression)Visit(node.Left);
+            var right = (AstExpression)Visit(node.Right);
+
+            return left != node.Left || right != node.Right
+                ? new AstNotEqualToExpression(left, right)
+                : node;
+        }
+
+        public virtual AstNode VisitLessThanExpression(AstLessThanExpression node)
+        {
+            var left = (AstExpression)Visit(node.Left);
+            var right = (AstExpression)Visit(node.Right);
+
+            return left != node.Left || right != node.Right
+                ? new AstLessThanExpression(left, right)
+                : node;
+        }
+
+        public virtual AstNode VisitLessThanOrEqualToExpression(AstLessThanOrEqualToExpression node)
+        {
+            var left = (AstExpression)Visit(node.Left);
+            var right = (AstExpression)Visit(node.Right);
+
+            return left != node.Left || right != node.Right
+                ? new AstLessThanOrEqualToExpression(left, right)
+                : node;
+        }
+
+        public virtual AstNode VisitGreaterThanExpression(AstGreaterThanExpression node)
+        {
+            var left = (AstExpression)Visit(node.Left);
+            var right = (AstExpression)Visit(node.Right);
+
+            return left != node.Left || right != node.Right
+                ? new AstGreaterThanExpression(left, right)
+                : node;
+        }
+
+        public virtual AstNode VisitGreaterThanOrEqualToExpression(AstGreaterThanOrEqualToExpression node)
+        {
+            var left = (AstExpression)Visit(node.Left);
+            var right = (AstExpression)Visit(node.Right);
+
+            return left != node.Left || right != node.Right
+                ? new AstGreaterThanOrEqualToExpression(left, right)
                 : node;
         }
 
@@ -930,6 +1560,34 @@ namespace IFVM.Ast
                 : node;
         }
 
+        public virtual AstNode VisitLabelStatement(AstLabelStatement node)
+        {
+            var label = (AstLabel)Visit(node.Label);
+
+            return label != node.Label
+                ? new AstLabelStatement(label)
+                : node;
+        }
+
+        public virtual AstNode VisitBranchStatement(AstBranchStatement node)
+        {
+            var condition = (AstExpression)Visit(node.Condition);
+            var statement = (AstStatement)Visit(node.Statement);
+
+            return condition != node.Condition || statement != node.Statement
+                ? new AstBranchStatement(condition, statement)
+                : node;
+        }
+
+        public virtual AstNode VisitJumpStatement(AstJumpStatement node)
+        {
+            var label = (AstLabel)Visit(node.Label);
+
+            return label != node.Label
+                ? new AstJumpStatement(label)
+                : node;
+        }
+
         public virtual AstNode VisitReturnStatement(AstReturnStatement node)
         {
             var expression = (AstExpression)Visit(node.Expression);
@@ -937,6 +1595,11 @@ namespace IFVM.Ast
             return expression != node.Expression
                 ? new AstReturnStatement(expression)
                 : node;
+        }
+
+        public virtual AstNode VisitQuitStatement(AstQuitStatement node)
+        {
+            return node;
         }
 
         public virtual AstNode VisitStackPushStatement(AstStackPushStatement node)
@@ -967,6 +1630,38 @@ namespace IFVM.Ast
                 ? new AstWriteMemoryStatement(address, value, node.Size)
                 : node;
         }
+
+        public virtual AstNode VisitOutputCharStatement(AstOutputCharStatement node)
+        {
+            var character = (AstExpression)Visit(node.Character);
+
+            return character != node.Character
+                ? new AstOutputCharStatement(character)
+                : node;
+        }
+
+        public virtual AstNode VisitOutputNumberStatement(AstOutputNumberStatement node)
+        {
+            var number = (AstExpression)Visit(node.Number);
+
+            return number != node.Number
+                ? new AstOutputNumberStatement(number)
+                : node;
+        }
+
+        public virtual AstNode VisitOutputStringStatement(AstOutputStringStatement node)
+        {
+            var address = (AstExpression)Visit(node.Address);
+
+            return address != node.Address
+                ? new AstOutputStringStatement(address)
+                : node;
+        }
+
+        public virtual AstNode VisitRestoreUndoStatement(AstRestoreUndoStatement node)
+        {
+            return node;
+        }
     }
 
     public static partial class AstFactory
@@ -979,6 +1674,41 @@ namespace IFVM.Ast
         public static AstLocal Local(AstExpression index, ValueSize size)
         {
             return new AstLocal(index, size);
+        }
+
+        public static AstConversionExpression ConversionExpression(AstExpression expression, ValueSize size, bool signed)
+        {
+            return new AstConversionExpression(expression, size, signed);
+        }
+
+        public static AstEqualToExpression EqualToExpression(AstExpression left, AstExpression right)
+        {
+            return new AstEqualToExpression(left, right);
+        }
+
+        public static AstNotEqualToExpression NotEqualToExpression(AstExpression left, AstExpression right)
+        {
+            return new AstNotEqualToExpression(left, right);
+        }
+
+        public static AstLessThanExpression LessThanExpression(AstExpression left, AstExpression right)
+        {
+            return new AstLessThanExpression(left, right);
+        }
+
+        public static AstLessThanOrEqualToExpression LessThanOrEqualToExpression(AstExpression left, AstExpression right)
+        {
+            return new AstLessThanOrEqualToExpression(left, right);
+        }
+
+        public static AstGreaterThanExpression GreaterThanExpression(AstExpression left, AstExpression right)
+        {
+            return new AstGreaterThanExpression(left, right);
+        }
+
+        public static AstGreaterThanOrEqualToExpression GreaterThanOrEqualToExpression(AstExpression left, AstExpression right)
+        {
+            return new AstGreaterThanOrEqualToExpression(left, right);
         }
 
         public static AstCallExpression CallExpression(AstExpression address, ImmutableList<AstExpression> arguments)
@@ -1011,9 +1741,29 @@ namespace IFVM.Ast
             return new AstExpressionStatement(expression);
         }
 
+        public static AstLabelStatement LabelStatement(AstLabel label)
+        {
+            return new AstLabelStatement(label);
+        }
+
+        public static AstBranchStatement BranchStatement(AstExpression condition, AstStatement statement)
+        {
+            return new AstBranchStatement(condition, statement);
+        }
+
+        public static AstJumpStatement JumpStatement(AstLabel label)
+        {
+            return new AstJumpStatement(label);
+        }
+
         public static AstReturnStatement ReturnStatement(AstExpression expression)
         {
             return new AstReturnStatement(expression);
+        }
+
+        public static AstQuitStatement QuitStatement()
+        {
+            return new AstQuitStatement();
         }
 
         public static AstStackPushStatement StackPushStatement(AstExpression value)
@@ -1029,6 +1779,26 @@ namespace IFVM.Ast
         public static AstWriteMemoryStatement WriteMemoryStatement(AstExpression address, AstExpression value, ValueSize size)
         {
             return new AstWriteMemoryStatement(address, value, size);
+        }
+
+        public static AstOutputCharStatement OutputCharStatement(AstExpression character)
+        {
+            return new AstOutputCharStatement(character);
+        }
+
+        public static AstOutputNumberStatement OutputNumberStatement(AstExpression number)
+        {
+            return new AstOutputNumberStatement(number);
+        }
+
+        public static AstOutputStringStatement OutputStringStatement(AstExpression address)
+        {
+            return new AstOutputStringStatement(address);
+        }
+
+        public static AstRestoreUndoStatement RestoreUndoStatement()
+        {
+            return new AstRestoreUndoStatement();
         }
     }
 }
