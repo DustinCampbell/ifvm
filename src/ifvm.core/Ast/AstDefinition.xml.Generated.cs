@@ -26,6 +26,7 @@ namespace IFVM.Ast
         StackPopExpression,
         ReadLocalExpression,
         ReadMemoryExpression,
+        DispatchExpression,
         ExpressionStatement,
         LabelStatement,
         BranchStatement,
@@ -33,6 +34,7 @@ namespace IFVM.Ast
         ReturnStatement,
         QuitStatement,
         StackPushStatement,
+        StackCopyStatement,
         WriteLocalStatement,
         WriteMemoryStatement,
         OutputCharStatement,
@@ -715,6 +717,50 @@ namespace IFVM.Ast
         }
     }
 
+    public partial class AstDispatchExpression : AstExpression
+    {
+        private readonly DispatchFunction function;
+        private readonly ImmutableList<AstExpression> arguments;
+
+        internal AstDispatchExpression(DispatchFunction function, ImmutableList<AstExpression> arguments) : base(AstNodeKind.DispatchExpression)
+        {
+            this.function = function;
+            this.arguments = arguments;
+        }
+
+        public DispatchFunction Function
+        {
+            get { return this.function; }
+        }
+
+        public ImmutableList<AstExpression> Arguments
+        {
+            get { return this.arguments; }
+        }
+
+        public override AstNode Accept(AstRewriter rewriter)
+        {
+            return rewriter.VisitDispatchExpression(this);
+        }
+
+        public override void Accept(AstVisitor visitor)
+        {
+            visitor.VisitDispatchExpression(this);
+        }
+
+        public override ImmutableList<AstNode> ChildNodes()
+        {
+            var builder = ImmutableList.CreateBuilder<AstNode>();
+
+            foreach (var child in Arguments)
+            {
+                builder.Add(child);
+            }
+
+            return builder.ToImmutable();
+        }
+    }
+
     public abstract partial class AstStatement : AstNode
     {
         internal AstStatement(AstNodeKind kind) : base(kind)
@@ -951,6 +997,40 @@ namespace IFVM.Ast
             var builder = ImmutableList.CreateBuilder<AstNode>();
 
             builder.Add(Value);
+
+            return builder.ToImmutable();
+        }
+    }
+
+    public partial class AstStackCopyStatement : AstStatement
+    {
+        private readonly AstExpression count;
+
+        internal AstStackCopyStatement(AstExpression count) : base(AstNodeKind.StackCopyStatement)
+        {
+            this.count = count;
+        }
+
+        public AstExpression Count
+        {
+            get { return this.count; }
+        }
+
+        public override AstNode Accept(AstRewriter rewriter)
+        {
+            return rewriter.VisitStackCopyStatement(this);
+        }
+
+        public override void Accept(AstVisitor visitor)
+        {
+            visitor.VisitStackCopyStatement(this);
+        }
+
+        public override ImmutableList<AstNode> ChildNodes()
+        {
+            var builder = ImmutableList.CreateBuilder<AstNode>();
+
+            builder.Add(Count);
 
             return builder.ToImmutable();
         }
@@ -1296,6 +1376,11 @@ namespace IFVM.Ast
             Visit(node.Address);
         }
 
+        public virtual void VisitDispatchExpression(AstDispatchExpression node)
+        {
+            VisitList(node.Arguments);
+        }
+
         public virtual void VisitExpressionStatement(AstExpressionStatement node)
         {
             Visit(node.Expression);
@@ -1329,6 +1414,11 @@ namespace IFVM.Ast
         public virtual void VisitStackPushStatement(AstStackPushStatement node)
         {
             Visit(node.Value);
+        }
+
+        public virtual void VisitStackCopyStatement(AstStackCopyStatement node)
+        {
+            Visit(node.Count);
         }
 
         public virtual void VisitWriteLocalStatement(AstWriteLocalStatement node)
@@ -1551,6 +1641,15 @@ namespace IFVM.Ast
                 : node;
         }
 
+        public virtual AstNode VisitDispatchExpression(AstDispatchExpression node)
+        {
+            var arguments = VisitList(node.Arguments);
+
+            return arguments != node.Arguments
+                ? new AstDispatchExpression(node.Function, arguments)
+                : node;
+        }
+
         public virtual AstNode VisitExpressionStatement(AstExpressionStatement node)
         {
             var expression = (AstExpression)Visit(node.Expression);
@@ -1608,6 +1707,15 @@ namespace IFVM.Ast
 
             return value != node.Value
                 ? new AstStackPushStatement(value)
+                : node;
+        }
+
+        public virtual AstNode VisitStackCopyStatement(AstStackCopyStatement node)
+        {
+            var count = (AstExpression)Visit(node.Count);
+
+            return count != node.Count
+                ? new AstStackCopyStatement(count)
                 : node;
         }
 
@@ -1736,6 +1844,11 @@ namespace IFVM.Ast
             return new AstReadMemoryExpression(address, size);
         }
 
+        public static AstDispatchExpression DispatchExpression(DispatchFunction function, ImmutableList<AstExpression> arguments)
+        {
+            return new AstDispatchExpression(function, arguments);
+        }
+
         public static AstExpressionStatement ExpressionStatement(AstExpression expression)
         {
             return new AstExpressionStatement(expression);
@@ -1769,6 +1882,11 @@ namespace IFVM.Ast
         public static AstStackPushStatement StackPushStatement(AstExpression value)
         {
             return new AstStackPushStatement(value);
+        }
+
+        public static AstStackCopyStatement StackCopyStatement(AstExpression count)
+        {
+            return new AstStackCopyStatement(count);
         }
 
         public static AstWriteLocalStatement WriteLocalStatement(AstLocal local, AstExpression value)

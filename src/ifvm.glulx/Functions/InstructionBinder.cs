@@ -43,6 +43,29 @@ namespace IFVM.Glulx.Functions
 
             switch (opcode.Number)
             {
+                case Opcodes.op_add:
+                    BindAdd(
+                        leftOp: loadOperands[0],
+                        rightOp: loadOperands[1],
+                        storeOp: storeOperands[0]);
+                    break;
+
+                case Opcodes.op_aload:
+                    BindRead(
+                        baseAddressOp: loadOperands[0],
+                        offsetOp: loadOperands[1],
+                        storeOp: storeOperands[0],
+                        size: ValueSize.DWord);
+                    break;
+
+                case Opcodes.op_astore:
+                    BindWrite(
+                        baseAddressOp: loadOperands[0],
+                        offsetOp: loadOperands[1],
+                        valueOp: loadOperands[2],
+                        size: ValueSize.DWord);
+                    break;
+
                 case Opcodes.op_call:
                     BindCall(
                         addressOp: loadOperands[0],
@@ -85,6 +108,20 @@ namespace IFVM.Glulx.Functions
                         targetOp: loadOperands[0],
                         storeOp: storeOperands[0],
                         size: ValueSize.DWord);
+                    break;
+
+                case Opcodes.op_div:
+                    BindDivide(
+                        leftOp: loadOperands[0],
+                        rightOp: loadOperands[1],
+                        storeOp: storeOperands[0]);
+                    break;
+
+                case Opcodes.op_glk:
+                    BindGlk(
+                        identifierOp: loadOperands[0],
+                        argumentCountOp: loadOperands[1],
+                        storeOperands: storeOperands[0]);
                     break;
 
                 case Opcodes.op_jeq:
@@ -142,11 +179,31 @@ namespace IFVM.Glulx.Functions
                         nextAddress: nextAddress);
                     break;
 
+                case Opcodes.op_jump:
+                    BindJump(
+                        jumpOffsetOp: loadOperands[0],
+                        nextAddress: nextAddress);
+                    break;
+
                 case Opcodes.op_jz:
                     BindJumpIfEqualToZero(
                         leftOp: loadOperands[0],
                         jumpOffsetOp: loadOperands[1],
                         nextAddress: nextAddress);
+                    break;
+
+                case Opcodes.op_mod:
+                    BindModulo(
+                        leftOp: loadOperands[0],
+                        rightOp: loadOperands[1],
+                        storeOp: storeOperands[0]);
+                    break;
+
+                case Opcodes.op_mul:
+                    BindMultiply(
+                        leftOp: loadOperands[0],
+                        rightOp: loadOperands[1],
+                        storeOp: storeOperands[0]);
                     break;
 
                 case Opcodes.op_quit:
@@ -162,6 +219,11 @@ namespace IFVM.Glulx.Functions
                         expressionOp: loadOperands[0]);
                     break;
 
+                case Opcodes.op_stkcopy:
+                    BindStackCopy(
+                        countOp: loadOperands[0]);
+                    break;
+
                 case Opcodes.op_streamchar:
                     BindStreamChar(
                         characterOp: loadOperands[0]);
@@ -175,6 +237,13 @@ namespace IFVM.Glulx.Functions
                 case Opcodes.op_streamstr:
                     BindStreamString(
                         addressOp: loadOperands[0]);
+                    break;
+
+                case Opcodes.op_sub:
+                    BindSubtract(
+                        leftOp: loadOperands[0],
+                        rightOp: loadOperands[1],
+                        storeOp: storeOperands[0]);
                     break;
 
                 default: throw new NotSupportedException($"Unsupported opcode: {opcode}");
@@ -256,6 +325,14 @@ namespace IFVM.Glulx.Functions
 
                 default: throw new InvalidOperationException($"Invalid operand type for store operand: {operand.Type}");
             }
+        }
+
+        private void BindAdd(Operand leftOp, Operand rightOp, Operand storeOp)
+        {
+            var left = BindLoadOperand(leftOp);
+            var right = BindLoadOperand(rightOp);
+
+            BindStoreOperand(storeOp, left.Plus(right));
         }
 
         private void BindCall(Operand addressOp, Operand argumentCountOp, Operand storeOp)
@@ -341,6 +418,29 @@ namespace IFVM.Glulx.Functions
             }
 
             BindStoreOperand(storeOp, expression, size);
+        }
+
+        private void BindDivide(Operand leftOp, Operand rightOp, Operand storeOp)
+        {
+            var left = BindLoadOperand(leftOp);
+            var right = BindLoadOperand(rightOp);
+
+            BindStoreOperand(storeOp, left.DividedBy(right));
+        }
+
+        private void BindGlk(Operand identifierOp, Operand argumentCountOp, Operand storeOperands)
+        {
+            var identifier = BindLoadOperand(identifierOp);
+            var argumentCount = BindLoadOperand(argumentCountOp);
+
+            BindStoreOperand(storeOperands,
+                AstFactory.DispatchExpression(DispatchFunctions.Glk, ImmutableList.Create(identifier, argumentCount)));
+        }
+
+        private void BindJump(Operand jumpOffsetOp, int nextAddress)
+        {
+            var jump = CreateJumpStatement(jumpOffsetOp, nextAddress);
+            this.bodyBuilder.AddStatement(jump);
         }
 
         private void BindJumpIf(AstExpression condition, Operand jumpOffsetOp, int nextAddress)
@@ -443,6 +543,22 @@ namespace IFVM.Glulx.Functions
             return AstFactory.JumpStatement(label);
         }
 
+        private void BindModulo(Operand leftOp, Operand rightOp, Operand storeOp)
+        {
+            var left = BindLoadOperand(leftOp);
+            var right = BindLoadOperand(rightOp);
+
+            BindStoreOperand(storeOp, left.Modulo(right));
+        }
+
+        private void BindMultiply(Operand leftOp, Operand rightOp, Operand storeOp)
+        {
+            var left = BindLoadOperand(leftOp);
+            var right = BindLoadOperand(rightOp);
+
+            BindStoreOperand(storeOp, left.Times(right));
+        }
+
         private void BindQuit()
         {
             this.bodyBuilder.Quit();
@@ -459,6 +575,14 @@ namespace IFVM.Glulx.Functions
             var expression = BindLoadOperand(expressionOp);
 
             this.bodyBuilder.Return(expression);
+        }
+
+        private void BindStackCopy(Operand countOp)
+        {
+            var count = BindLoadOperand(countOp);
+
+            this.bodyBuilder.AddStatement(
+                AstFactory.StackCopyStatement(count));
         }
 
         private void BindStreamChar(Operand characterOp)
@@ -483,6 +607,49 @@ namespace IFVM.Glulx.Functions
 
             this.bodyBuilder.AddStatement(
                 AstFactory.OutputStringStatement(address));
+        }
+
+        private void BindSubtract(Operand leftOp, Operand rightOp, Operand storeOp)
+        {
+            var left = BindLoadOperand(leftOp);
+            var right = BindLoadOperand(rightOp);
+
+            BindStoreOperand(storeOp, left.Minus(right));
+        }
+
+        private void BindRead(Operand baseAddressOp, Operand offsetOp, Operand storeOp, ValueSize size)
+        {
+            var baseAddress = BindLoadOperand(baseAddressOp);
+            var offset = BindLoadOperand(offsetOp);
+
+            var address = ComputeAddress(baseAddress, offset, size);
+
+            BindStoreOperand(storeOp,
+                AstFactory.ReadMemoryExpression(address, size));
+        }
+
+        private void BindWrite(Operand baseAddressOp, Operand offsetOp, Operand valueOp, ValueSize size)
+        {
+            var baseAddress = BindLoadOperand(baseAddressOp);
+            var offset = BindLoadOperand(offsetOp);
+            var value = BindLoadOperand(valueOp);
+
+            var address = ComputeAddress(baseAddress, offset, size);
+
+            this.bodyBuilder.AddStatement(
+                AstFactory.WriteMemoryStatement(address, value, size));
+        }
+
+        private AstExpression ComputeAddress(AstExpression baseAddress, AstExpression offset, ValueSize size)
+        {
+            switch (size)
+            {
+                case ValueSize.DWord: return baseAddress.Plus(offset.Times(4));
+                case ValueSize.Word: return baseAddress.Plus(offset.Times(2));
+                case ValueSize.Byte: return baseAddress.Plus(offset);
+
+                default: throw new InvalidOperationException($"Unexpected size: {size}");
+            }
         }
     }
 }

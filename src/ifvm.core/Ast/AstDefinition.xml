@@ -75,6 +75,11 @@
       <Field Name="Size" Type="ValueSize" DoNotVisit="true" />
     </Node>
 
+    <Node Name="AstDispatchExpression" Base="AstExpression">
+      <Field Name="Function" Type="DispatchFunction" DoNotVisit="true" />
+      <Field Name="Arguments" Type="AstExpression" IsList="true" />
+    </Node>
+
     <!-- statements -->
 
     <Node Name="AstStatement" Base="AstNode" IsAbstract="true"/>
@@ -106,6 +111,10 @@
       <Field Name="Value" Type="AstExpression" />
     </Node>
 
+    <Node Name="AstStackCopyStatement" Base="AstStatement">
+      <Field Name="Count" Type="AstExpression" />
+    </Node>
+
     <Node Name="AstWriteLocalStatement" Base="AstStatement">
       <Field Name="Local" Type="AstLocal" />
       <Field Name="Value" Type="AstExpression" />
@@ -120,7 +129,7 @@
     <Node Name="AstOutputCharStatement" Base="AstStatement">
       <Field Name="Character" Type="AstExpression" />
     </Node>
-    
+
     <Node Name="AstOutputNumberStatement" Base="AstStatement">
       <Field Name="Number" Type="AstExpression" />
     </Node>

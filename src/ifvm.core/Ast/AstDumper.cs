@@ -220,6 +220,12 @@ namespace IFVM.Ast
             ParenthesizedList(node.Expression);
         }
 
+        public override void VisitDispatchExpression(AstDispatchExpression node)
+        {
+            Append(node.Function.Name);
+            ParenthesizedList(node.Arguments);
+        }
+
         public override void VisitDivideExpression(AstDivideExpression node)
         {
             Parenthesize(() =>
@@ -404,6 +410,12 @@ namespace IFVM.Ast
         {
             Append("return ");
             Visit(node.Expression);
+        }
+
+        public override void VisitStackCopyStatement(AstStackCopyStatement node)
+        {
+            Append("stack-copy ");
+            Visit(node.Count);
         }
 
         public override void VisitStackPopExpression(AstStackPopExpression node)
