@@ -152,9 +152,9 @@ namespace IFVM.Core
             s_fourByteArrays.Free(tempArray);
         }
 
-        public Scanner CreateScanner(int offset)
+        public MemoryScanner CreateScanner(int offset)
         {
-            return new Scanner(this, offset);
+            return new MemoryScanner(this, offset);
         }
     }
 }

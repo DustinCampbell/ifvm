@@ -2,16 +2,19 @@
 using System.IO;
 using System.Threading.Tasks;
 using IFVM.Core;
+using IFVM.Glulx.Functions;
 
 namespace IFVM.Glulx
 {
     public class GlulxMachine : Machine
     {
         public GlulxHeader Header { get; }
+        public Function StartFunction { get; }
 
         private GlulxMachine(GlulxHeader header, Memory memory, Stack stack) : base(memory, stack)
         {
             this.Header = header;
+            this.StartFunction = Function.Read(memory, (int)header.StartFunc);
         }
 
         public static async Task<GlulxMachine> CreateAsync(Stream stream)
@@ -48,7 +51,7 @@ namespace IFVM.Glulx
             var checksum = 0u;
             while (scanner.CanReadNextDWord)
             {
-                if (scanner.Offset == 0x20)
+                if (scanner.Address == 0x20)
                 {
                     // Note: We don't include the checksum value from the header.
                     scanner.SkipDWord();
