@@ -40,6 +40,21 @@ namespace IFVM.Core
             return result;
         }
 
+        public byte PeekByte(int offset = 0)
+        {
+            return this.Memory.ReadByte(address + offset);
+        }
+
+        public ushort PeekWord(int offset = 0)
+        {
+            return this.Memory.ReadWord(address + offset);
+        }
+
+        public uint PeekDWord(int offset = 0)
+        {
+            return this.Memory.ReadDWord(address + offset);
+        }
+
         public void SkipByte()
         {
             address++;
