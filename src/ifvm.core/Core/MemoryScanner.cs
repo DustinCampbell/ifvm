@@ -15,6 +15,11 @@ namespace IFVM.Core
             this.address = address;
         }
 
+        public void SetAddress(int newAddress)
+        {
+            this.address = newAddress;
+        }
+
         public bool CanReadNextByte => address < this.Memory.Size;
         public bool CanReadNextWord => address < this.Memory.Size - 1;
         public bool CanReadNextDWord => address < this.Memory.Size - 3;
@@ -60,14 +65,29 @@ namespace IFVM.Core
             address++;
         }
 
+        public void SkipBytes(int count)
+        {
+            address += count;
+        }
+
         public void SkipWord()
         {
             address += 2;
         }
 
+        public void SkipWords(int count)
+        {
+            address += (count * 2);
+        }
+
         public void SkipDWord()
         {
             address += 4;
+        }
+
+        public void SkipDWords(int count)
+        {
+            address += (count * 4);
         }
     }
 }

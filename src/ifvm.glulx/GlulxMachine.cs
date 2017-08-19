@@ -14,7 +14,7 @@ namespace IFVM.Glulx
         private GlulxMachine(GlulxHeader header, Memory memory, Stack stack) : base(memory, stack)
         {
             this.Header = header;
-            this.StartFunction = Function.Read(memory, (int)header.StartFunc);
+            this.StartFunction = Function.Read(memory, (int)header.StartFunc, (int)header.RamStart);
         }
 
         public static async Task<GlulxMachine> CreateAsync(Stream stream)
@@ -46,7 +46,7 @@ namespace IFVM.Glulx
 
         private static void VerifyChecksum(Memory memory, uint expectedValue)
         {
-            var scanner = memory.CreateScanner(offset: 0);
+            var scanner = memory.CreateScanner(address: 0);
 
             var checksum = 0u;
             while (scanner.CanReadNextDWord)

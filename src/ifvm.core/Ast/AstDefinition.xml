@@ -6,7 +6,7 @@
   </Usings>
 
   <Nodes>
-    
+
     <!-- simple nodes -->
 
     <Node Name="AstLabel" Base="AstNode">
@@ -17,24 +17,78 @@
       <Field Name="Index" Type="AstExpression" />
       <Field Name="Size" Type="ValueSize" DoNotVisit="true" />
     </Node>
-    
+
     <!-- expressions -->
 
     <Node Name="AstExpression" Base="AstNode" IsAbstract="true" />
 
+    <Node Name="AstBinaryExpression" Base="AstExpression" IsAbstract="true">
+      <Field Name="Left" Type="AstExpression" />
+      <Field Name="Right" Type="AstExpression" />
+    </Node>
+
+    <Node Name="AstUnaryExpression" Base="AstExpression" IsAbstract="true">
+      <Field Name="Expression" Type="AstExpression" />
+    </Node>
+
     <Node Name="AstConstantExpression" Base="AstExpression" DontCreateFactoryMethod="true">
       <Field Name="Value" Type="int" DoNotVisit="true" />
     </Node>
-    
+
+    <Node Name="AstAddExpression" Base="AstBinaryExpression" DontCreateFactoryMethod="true" />
+    <Node Name="AstSubtractExpression" Base="AstBinaryExpression" DontCreateFactoryMethod="true" />
+    <Node Name="AstMultiplyExpression" Base="AstBinaryExpression" DontCreateFactoryMethod="true" />
+    <Node Name="AstDivideExpression" Base="AstBinaryExpression" DontCreateFactoryMethod="true" />
+    <Node Name="AstModuloExpression" Base="AstBinaryExpression" DontCreateFactoryMethod="true" />
+
+    <Node Name="AstCallExpression" Base="AstExpression">
+      <Field Name="Address" Type="AstExpression" />
+      <Field Name="Arguments" Type="AstExpression" IsList="true" />
+    </Node>
+
+    <Node Name="AstCallWithArgCountExpression" Base="AstExpression">
+      <Field Name="Address" Type="AstExpression" />
+      <Field Name="ArgumentCount" Type="AstExpression" />
+    </Node>
+
+    <Node Name="AstStackPopExpression" Base="AstExpression" />
+
+    <Node Name="AstReadLocalExpression" Base="AstExpression">
+      <Field Name="Local" Type="AstLocal" />
+    </Node>
+
+    <Node Name="AstReadMemoryExpression" Base="AstExpression">
+      <Field Name="Address" Type="AstExpression" />
+      <Field Name="Size" Type="ValueSize" DoNotVisit="true" />
+    </Node>
+
     <!-- statements -->
-    
+
     <Node Name="AstStatement" Base="AstNode" IsAbstract="true"/>
+
+    <Node Name="AstExpressionStatement" Base="AstStatement">
+      <Field Name="Expression" Type="AstExpression" />
+    </Node>
+
+    <Node Name="AstReturnStatement" Base="AstStatement">
+      <Field Name="Expression" Type="AstExpression" />
+    </Node>
+
+    <Node Name="AstStackPushStatement" Base="AstStatement">
+      <Field Name="Value" Type="AstExpression" />
+    </Node>
 
     <Node Name="AstWriteLocalStatement" Base="AstStatement">
       <Field Name="Local" Type="AstLocal" />
       <Field Name="Value" Type="AstExpression" />
     </Node>
-    
+
+    <Node Name="AstWriteMemoryStatement" Base="AstStatement">
+      <Field Name="Address" Type="AstExpression" />
+      <Field Name="Value" Type="AstExpression" />
+      <Field Name="Size" Type="ValueSize" DoNotVisit="true" />
+    </Node>
+
   </Nodes>
 
 </Tree>

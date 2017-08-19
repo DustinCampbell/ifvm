@@ -20,7 +20,7 @@ namespace IFVM.Ast
             this.statements.Add(statement);
         }
 
-        public AstLocal DeclareLocal(AstExpression value = null, ValueSize size = ValueSize.DWord)
+        public AstLocal DeclareLocal(ValueSize size, AstExpression value = null)
         {
             var index = AstFactory.ConstantExpression(this.locals.Count);
             var local = AstFactory.Local(index, size);
@@ -38,6 +38,12 @@ namespace IFVM.Ast
         {
             AddStatement(
                 AstFactory.WriteLocalStatement(local, value));
+        }
+
+        public void Return(AstExpression expression)
+        {
+            AddStatement(
+                AstFactory.ReturnStatement(expression));
         }
 
         public AstBody ToBody()

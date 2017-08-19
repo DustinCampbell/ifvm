@@ -20,7 +20,7 @@ namespace IFVM.Glulx
         public GlulxHeader(Memory memory)
         {
             // Read header values.
-            var scanner = memory.CreateScanner(offset: 0);
+            var scanner = memory.CreateScanner(address: 0);
 
             if (scanner.NextDWord() != MagicNumber)
             {
