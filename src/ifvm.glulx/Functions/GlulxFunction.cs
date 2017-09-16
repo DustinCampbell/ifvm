@@ -5,20 +5,14 @@ using IFVM.Core;
 
 namespace IFVM.Glulx.Functions
 {
-    public class Function
+    public class GlulxFunction : Function
     {
-        public FunctionType Type { get; }
-        public int Address { get; }
-        public AstBody Body { get; }
-
-        private Function(FunctionType type, int address, AstBody body)
+        private GlulxFunction(FunctionKind kind, int address, AstBody body)
+            : base(kind, address, body)
         {
-            this.Type = type;
-            this.Address = address;
-            this.Body = body;
         }
 
-        public static Function Read(Memory memory, int address, int ramStart)
+        public static GlulxFunction Read(Memory memory, int address, int ramStart)
         {
             var scanner = memory.CreateScanner(address);
             var type = ReadType(scanner);
@@ -28,21 +22,21 @@ namespace IFVM.Glulx.Functions
             ReadBody(scanner, binder);
             var body = bodyBuilder.ToBody();
 
-            return new Function(type, address, body);
+            return new GlulxFunction(type, address, body);
         }
 
-        private static FunctionType ReadType(MemoryScanner scanner)
+        private static FunctionKind ReadType(MemoryScanner scanner)
         {
-            FunctionType type;
+            FunctionKind type;
 
             var typeByte = scanner.NextByte();
             switch (typeByte)
             {
                 case 0xC0:
-                    type = FunctionType.StackArgument;
+                    type = FunctionKind.StackArgument;
                     break;
                 case 0xC1:
-                    type = FunctionType.LocalArgument;
+                    type = FunctionKind.LocalArgument;
                     break;
                 default:
                     if (typeByte >= 0xC0 && typeByte <= 0xDF)

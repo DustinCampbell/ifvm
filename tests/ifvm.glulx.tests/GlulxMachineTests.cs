@@ -75,7 +75,7 @@ label_0:
             using (var stream = Resources.LoadResource(Resources.Glulx_Advent))
             {
                 var machine = await GlulxMachine.CreateAsync(stream);
-                var function = machine.ReadFunction(0x48);
+                var function = machine.GetFunction(0x48);
                 var body = AstDumper.Dump(function.Body);
 
                 Assert.Equal(expected.Trim(), body.Trim());
@@ -298,7 +298,7 @@ label_48:
             using (var stream = Resources.LoadResource(Resources.Glulx_Advent))
             {
                 var machine = await GlulxMachine.CreateAsync(stream);
-                var function = machine.ReadFunction(0x104b0);
+                var function = machine.GetFunction(0x104b0);
                 var body = AstDumper.Dump(function.Body);
 
                 Assert.Equal(expected.Trim(), body.Trim());
@@ -380,7 +380,7 @@ label_4:
             using (var stream = Resources.LoadResource(Resources.Glulx_Glulxercise))
             {
                 var machine = await GlulxMachine.CreateAsync(stream);
-                var function = machine.ReadFunction(0x48);
+                var function = machine.GetFunction(0x48);
                 var body = AstDumper.Dump(function.Body);
 
                 Assert.Equal(expected.Trim(), body.Trim());

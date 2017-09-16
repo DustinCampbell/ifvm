@@ -14,7 +14,7 @@ namespace IFVM.Glulx
         private GlulxMachine(GlulxHeader header, Memory memory, Stack stack) : base(memory, stack)
         {
             this.Header = header;
-            this.StartFunction = ReadFunction((int)header.StartFunc);
+            this.StartFunction = GetFunction((int)header.StartFunc);
         }
 
         public static async Task<GlulxMachine> CreateAsync(Stream stream)
@@ -68,9 +68,9 @@ namespace IFVM.Glulx
             }
         }
 
-        public Function ReadFunction(int address)
+        protected override Function ReadFunction(int address)
         {
-            return Function.Read(this.Memory, address, (int)this.Header.RamStart);
+            return GlulxFunction.Read(this.Memory, address, (int)this.Header.RamStart);
         }
     }
 }
