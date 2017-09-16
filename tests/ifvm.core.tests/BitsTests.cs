@@ -1,4 +1,5 @@
 ﻿using System;
+using IFVM.Utilities;
 using Xunit;
 
 namespace IFVM.Core.Tests

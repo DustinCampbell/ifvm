@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace IFVM.Core
+namespace IFVM.Utilities
 {
     public static class Bits
     {
