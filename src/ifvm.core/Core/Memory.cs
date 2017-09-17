@@ -9,8 +9,8 @@ namespace IFVM.Core
 {
     public partial class Memory
     {
-        private static readonly ObjectPool<byte[]> s_twoByteArrays = new ObjectPool<byte[]>(() => new byte[2], 512);
-        private static readonly ObjectPool<byte[]> s_fourByteArrays = new ObjectPool<byte[]>(() => new byte[4], 512);
+        private static readonly ObjectPool<byte[]> s_twoByteArrays = new ObjectPool<byte[]>(() => new byte[2]);
+        private static readonly ObjectPool<byte[]> s_fourByteArrays = new ObjectPool<byte[]>(() => new byte[4]);
 
         private byte[] _bytes;
         private List<(int start, int length)> _readOnlyRegions;

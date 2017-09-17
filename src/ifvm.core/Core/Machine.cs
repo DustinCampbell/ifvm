@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 
 namespace IFVM.Core
 {
@@ -28,6 +30,11 @@ namespace IFVM.Core
             }
 
             return function;
+        }
+
+        internal uint CallFunction(int address, ImmutableArray<uint> immutableArray)
+        {
+            throw new NotImplementedException();
         }
     }
 }

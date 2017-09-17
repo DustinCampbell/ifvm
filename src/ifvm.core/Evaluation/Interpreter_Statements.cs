@@ -5,7 +5,7 @@ namespace IFVM.Execution
 {
     public partial class Interpreter
     {
-        private void Execute(AstStatement statement)
+        private void Evaluate(AstStatement statement)
         {
             switch (statement.Kind)
             {
@@ -15,7 +15,7 @@ namespace IFVM.Execution
                 case AstNodeKind.ExpressionStatement:
                     {
                         var expressionStatement = (AstExpressionStatement)statement;
-                        Execute(expressionStatement.Expression); // throw away result
+                        Evaluate(expressionStatement.Expression); // throw away result
                         break;
                     }
 

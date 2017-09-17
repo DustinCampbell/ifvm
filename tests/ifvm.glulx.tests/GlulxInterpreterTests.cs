@@ -15,7 +15,7 @@ namespace IFVM.Glulx.Tests
                 var machine = await GlulxMachine.CreateAsync(stream);
                 var interpreter = new Interpreter(machine);
 
-                interpreter.Execute(machine.StartFunction);
+                interpreter.Evaluate(machine.StartFunction);
             }
         }
     }

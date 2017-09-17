@@ -15,7 +15,7 @@ namespace IFVM.Execution
             _machine = machine ?? throw new ArgumentNullException(nameof(machine));
         }
 
-        public uint Execute(Function function)
+        public uint Evaluate(Function function)
         {
             var cfg = ControlFlowGraph.Compute(function.Body);
             var block = cfg.GetBlock(cfg.EntryBlock.Successors[0]);
@@ -33,7 +33,7 @@ namespace IFVM.Execution
 
                     void HandleReturnStatement(AstReturnStatement returnStatement)
                     {
-                        result = Execute(returnStatement.Expression);
+                        result = Evaluate(returnStatement.Expression);
                         nextBlockId = BlockId.Exit;
                         jump = true;
                     }
@@ -57,7 +57,7 @@ namespace IFVM.Execution
                         case AstNodeKind.BranchStatement:
                             {
                                 var branchStatement = (AstBranchStatement)statement;
-                                var condition = Execute(branchStatement.Condition);
+                                var condition = Evaluate(branchStatement.Condition);
                                 if (condition == 1)
                                 {
                                     switch (branchStatement.Statement.Kind)
@@ -84,7 +84,7 @@ namespace IFVM.Execution
                         break;
                     }
 
-                    Execute(statement);
+                    Evaluate(statement);
                 }
 
                 block = cfg.GetBlock(nextBlockId);
