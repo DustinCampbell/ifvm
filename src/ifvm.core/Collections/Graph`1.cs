@@ -26,5 +26,12 @@ namespace IFVM.Collections
 
         protected abstract TBuilder CreateGraphBuilder();
         protected abstract void BuildBlocks(TBuilder builder);
+
+        public TBlock GetBlock(BlockId id)
+            => _idToBlockMap[id];
+
+        public TBlock EntryBlock => GetBlock(BlockId.Entry);
+        public TBlock ExitBlock => GetBlock(BlockId.Exit);
+        public ImmutableList<TBlock> Blocks => _blocks;
     }
 }

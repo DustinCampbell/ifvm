@@ -68,9 +68,9 @@ namespace IFVM.Collections
             {
                 switch (this._value)
                 {
-                    case EntryValue: return "{Entry Block}";
-                    case ExitValue: return "{Exit Block}";
-                    default: return $"{{Block: {_value}}}";
+                    case EntryValue: return "Entry";
+                    case ExitValue: return "Exit";
+                    default: return _value.ToString();
                 }
             }
 

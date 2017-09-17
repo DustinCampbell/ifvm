@@ -62,7 +62,7 @@ namespace IFVM.Ast.FlowAnalysis
                             // Add edge if previous statement is null to ensure that an
                             // edge is created between the entry block and the first block.
                             if (previousStatement == null ||
-                                ContinuesToNextBlock(statement))
+                                ContinuesToNextBlock(previousStatement))
                             {
                                 builder.AddEdge(currentBlockId, labelBlockId);
                             }
@@ -91,7 +91,7 @@ namespace IFVM.Ast.FlowAnalysis
                             {
                                 case AstNodeKind.JumpStatement:
                                     {
-                                        var jumpStatement = (AstJumpStatement)statement;
+                                        var jumpStatement = (AstJumpStatement)branchStatement.Statement;
                                         var jumpBlockId = LabelToBlockId(jumpStatement.Label);
 
                                         builder.AddEdge(currentBlockId, jumpBlockId);

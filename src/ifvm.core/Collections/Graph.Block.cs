@@ -19,6 +19,9 @@ namespace IFVM.Collections
                 this.Predecessors = predecessors;
                 this.Successors = successors;
             }
+
+            public override string ToString()
+                => ID.ToString();
         }
     }
 }
