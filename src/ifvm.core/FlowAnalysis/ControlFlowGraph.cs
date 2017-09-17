@@ -53,6 +53,12 @@ namespace IFVM.FlowAnalysis
             // Next, add statements to the blocks and all edges
             foreach (var statement in Body.Statements)
             {
+                void HandleJumpStatement(AstJumpStatement jumpStatement)
+                {
+                    var jumpBlockId = LabelToBlockId(jumpStatement.Label);
+                    builder.AddEdge(currentBlockId, jumpBlockId);
+                }
+
                 switch (statement.Kind)
                 {
                     case AstNodeKind.LabelStatement:
@@ -74,14 +80,8 @@ namespace IFVM.FlowAnalysis
                         }
 
                     case AstNodeKind.JumpStatement:
-                        {
-                            var jumpStatement = (AstJumpStatement)statement;
-                            var jumpBlockId = LabelToBlockId(jumpStatement.Label);
-
-                            builder.AddEdge(currentBlockId, jumpBlockId);
-
-                            break;
-                        }
+                        HandleJumpStatement((AstJumpStatement)statement);
+                        break;
 
                     case AstNodeKind.BranchStatement:
                         {
@@ -91,14 +91,8 @@ namespace IFVM.FlowAnalysis
                             switch (branchStatement.Statement.Kind)
                             {
                                 case AstNodeKind.JumpStatement:
-                                    {
-                                        var jumpStatement = (AstJumpStatement)branchStatement.Statement;
-                                        var jumpBlockId = LabelToBlockId(jumpStatement.Label);
-
-                                        builder.AddEdge(currentBlockId, jumpBlockId);
-
-                                        break;
-                                    }
+                                    HandleJumpStatement((AstJumpStatement)branchStatement.Statement);
+                                    break;
 
                                 case AstNodeKind.ReturnStatement:
                                     builder.AddEdge(currentBlockId, BlockId.Exit);
