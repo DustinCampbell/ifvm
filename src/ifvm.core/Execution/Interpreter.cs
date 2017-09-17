@@ -8,7 +8,14 @@ namespace IFVM.Execution
 {
     public partial class Interpreter
     {
-        public static uint Execute(Function function, Machine machine)
+        private readonly Machine _machine;
+
+        public Interpreter(Machine machine)
+        {
+            _machine = machine ?? throw new ArgumentNullException(nameof(machine));
+        }
+
+        public uint Execute(Function function)
         {
             var cfg = ControlFlowGraph.Compute(function.Body);
             var block = cfg.GetBlock(cfg.EntryBlock.Successors[0]);
@@ -22,9 +29,11 @@ namespace IFVM.Execution
                 {
                     var jump = false;
 
+                    // First, handle any control flow statements
+
                     void HandleReturnStatement(AstReturnStatement returnStatement)
                     {
-                        result = Execute(returnStatement.Expression, machine);
+                        result = Execute(returnStatement.Expression);
                         nextBlockId = BlockId.Exit;
                         jump = true;
                     }
@@ -35,7 +44,6 @@ namespace IFVM.Execution
                         jump = true;
                     }
 
-                    // Handle control flow
                     switch (statement.Kind)
                     {
                         case AstNodeKind.ReturnStatement:
@@ -49,7 +57,7 @@ namespace IFVM.Execution
                         case AstNodeKind.BranchStatement:
                             {
                                 var branchStatement = (AstBranchStatement)statement;
-                                var condition = Execute(branchStatement.Condition, machine);
+                                var condition = Execute(branchStatement.Condition);
                                 if (condition == 1)
                                 {
                                     switch (branchStatement.Statement.Kind)
@@ -76,34 +84,13 @@ namespace IFVM.Execution
                         break;
                     }
 
-                    Execute(statement, machine);
+                    Execute(statement);
                 }
 
                 block = cfg.GetBlock(nextBlockId);
             }
 
             return result;
-        }
-
-        private static uint Execute(AstExpression expression, Machine machine)
-        {
-            switch (expression.Kind)
-            {
-                default:
-                    throw new InvalidOperationException($"Invalid expression kind: {expression.Kind}");
-            }
-        }
-
-        private static void Execute(AstStatement statement, Machine machine)
-        {
-            switch (statement.Kind)
-            {
-                case AstNodeKind.LabelStatement:
-                    break;
-
-                default:
-                    throw new InvalidOperationException($"Invalid statement kind: {statement.Kind}");
-            }
         }
     }
 }
