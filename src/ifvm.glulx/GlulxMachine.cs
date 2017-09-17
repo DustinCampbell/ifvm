@@ -9,12 +9,10 @@ namespace IFVM.Glulx
     public class GlulxMachine : Machine
     {
         public GlulxHeader Header { get; }
-        public Function StartFunction { get; }
 
-        private GlulxMachine(GlulxHeader header, Memory memory, Stack stack) : base(memory, stack)
+        private GlulxMachine(GlulxHeader header, Memory memory, Stack stack) : base(memory, stack, (int)header.StartFunc)
         {
             this.Header = header;
-            this.StartFunction = GetFunction((int)header.StartFunc);
         }
 
         public static async Task<GlulxMachine> CreateAsync(Stream stream)

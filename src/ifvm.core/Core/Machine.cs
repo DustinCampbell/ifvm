@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.Immutable;
 
 namespace IFVM.Core
@@ -9,14 +8,20 @@ namespace IFVM.Core
         public Memory Memory { get; }
         public Stack Stack { get; }
 
+        private readonly int _startFunctionAddress;
         private readonly Dictionary<int, Function> _functionCache;
+        private readonly Stack<CallFrame> _callFrames;
 
-        protected Machine(Memory memory, Stack stack)
+        public Function StartFunction => GetFunction(_startFunctionAddress);
+
+        protected Machine(Memory memory, Stack stack, int startFunctionAddress)
         {
             this.Memory = memory;
             this.Stack = stack;
+            _startFunctionAddress = startFunctionAddress;
 
             _functionCache = new Dictionary<int, Function>();
+            _callFrames = new Stack<CallFrame>(capacity: 1024);
         }
 
         protected abstract Function ReadFunction(int address);
@@ -32,9 +37,23 @@ namespace IFVM.Core
             return function;
         }
 
-        internal uint CallFunction(int address, ImmutableArray<uint> immutableArray)
+        internal uint CallFunction(int address, ImmutableArray<uint> arguments)
         {
-            throw new NotImplementedException();
+            var function = GetFunction(address);
+            var callFrame = new CallFrame(this, function, arguments);
+
+            _callFrames.Push(callFrame);
+            var result = callFrame.Run();
+            _callFrames.Pop();
+
+            this.Stack.SetPointer(callFrame.StackPointer);
+
+            return result;
+        }
+
+        public void Run()
+        {
+            CallFunction(_startFunctionAddress, ImmutableArray<uint>.Empty);
         }
     }
 }

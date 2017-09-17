@@ -41,6 +41,15 @@ namespace IFVM.Core
             }
         }
 
+        public void SetPointer(int newPointer)
+        {
+            if (newPointer < 0 || newPointer > _bytes.Length)
+            {
+                throw new ArgumentOutOfRangeException(nameof(newPointer), newPointer,
+                    $"Stack pointer can be a value between 0 and {_bytes.Length}.");
+            }
+        }
+
         public void PushByte(byte value)
         {
             ValidatePush(sizeof(byte));

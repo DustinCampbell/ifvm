@@ -8,7 +8,8 @@ namespace IFVM.TestUtilities
         public TestMachine(Memory memory = null, Stack stack = null)
             : base(
                   memory: memory ?? Memory.Create(new byte[0]),
-                  stack: stack ?? new Stack(1024))
+                  stack: stack ?? new Stack(1024),
+                  startFunctionAddress: 0)
         {
         }
 
