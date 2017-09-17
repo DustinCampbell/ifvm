@@ -26,6 +26,7 @@ namespace IFVM.Ast
         StackPopExpression,
         ReadLocalExpression,
         ReadMemoryExpression,
+        GetMemorySize,
         DispatchExpression,
         ExpressionStatement,
         LabelStatement,
@@ -717,6 +718,28 @@ namespace IFVM.Ast
         }
     }
 
+    public partial class AstGetMemorySize : AstExpression
+    {
+        internal AstGetMemorySize() : base(AstNodeKind.GetMemorySize)
+        {
+        }
+
+        public override AstNode Accept(AstRewriter rewriter)
+        {
+            return rewriter.VisitGetMemorySize(this);
+        }
+
+        public override void Accept(AstVisitor visitor)
+        {
+            visitor.VisitGetMemorySize(this);
+        }
+
+        public override ImmutableList<AstNode> ChildNodes()
+        {
+            return ImmutableList<AstNode>.Empty;
+        }
+    }
+
     public partial class AstDispatchExpression : AstExpression
     {
         private readonly DispatchFunction function;
@@ -1376,6 +1399,10 @@ namespace IFVM.Ast
             Visit(node.Address);
         }
 
+        public virtual void VisitGetMemorySize(AstGetMemorySize node)
+        {
+        }
+
         public virtual void VisitDispatchExpression(AstDispatchExpression node)
         {
             VisitList(node.Arguments);
@@ -1641,6 +1668,11 @@ namespace IFVM.Ast
                 : node;
         }
 
+        public virtual AstNode VisitGetMemorySize(AstGetMemorySize node)
+        {
+            return node;
+        }
+
         public virtual AstNode VisitDispatchExpression(AstDispatchExpression node)
         {
             var arguments = VisitList(node.Arguments);
@@ -1842,6 +1874,11 @@ namespace IFVM.Ast
         public static AstReadMemoryExpression ReadMemoryExpression(AstExpression address, ValueSize size)
         {
             return new AstReadMemoryExpression(address, size);
+        }
+
+        public static AstGetMemorySize GetMemorySize()
+        {
+            return new AstGetMemorySize();
         }
 
         public static AstDispatchExpression DispatchExpression(DispatchFunction function, ImmutableList<AstExpression> arguments)

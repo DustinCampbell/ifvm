@@ -13,6 +13,7 @@ namespace IFVM.Core
         private readonly Stack<CallFrame> _callFrames;
 
         public Function StartFunction => GetFunction(_startFunctionAddress);
+        public CallFrame CurrentFrame => _callFrames.Peek();
 
         protected Machine(Memory memory, Stack stack, int startFunctionAddress)
         {
@@ -40,13 +41,13 @@ namespace IFVM.Core
         internal uint CallFunction(int address, ImmutableArray<uint> arguments)
         {
             var function = GetFunction(address);
-            var callFrame = new CallFrame(this, function, arguments);
+            var frame = new CallFrame(this, function, arguments);
 
-            _callFrames.Push(callFrame);
-            var result = callFrame.Run();
+            _callFrames.Push(frame);
+            var result = frame.Run();
             _callFrames.Pop();
 
-            this.Stack.SetPointer(callFrame.StackPointer);
+            this.Stack.SetPointer(frame.StackPointer);
 
             return result;
         }

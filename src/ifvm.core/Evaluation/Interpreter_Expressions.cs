@@ -272,6 +272,8 @@ namespace IFVM.Execution
                                 Debug.Assert(evaluationStack.Count >= call.Arguments.Count + 1);
 
                                 var args = ImmutableArray.CreateBuilder<uint>(initialCapacity: call.Arguments.Count);
+                                args.Count = call.Arguments.Count;
+
                                 for (int i = call.Arguments.Count - 1; i >= 0; i--)
                                 {
                                     args[i] = evaluationStack.Pop();
@@ -281,6 +283,22 @@ namespace IFVM.Execution
 
                                 var result = _machine.CallFunction((int)address, args.ToImmutable());
                                 evaluationStack.Push(result);
+                                break;
+                            }
+
+                        case AstNodeKind.StackPopExpression:
+                            {
+                                evaluationStack.Push(_machine.Stack.PopDWord());
+                                break;
+                            }
+
+                        case AstNodeKind.ReadLocalExpression:
+                            {
+                                var readLocal = (AstReadLocalExpression)expression;
+                                var index = (int)Evaluate(readLocal.Local.Index);
+
+                                evaluationStack.Push(_machine.CurrentFrame.ReadLocal(index));
+
                                 break;
                             }
 
@@ -309,6 +327,12 @@ namespace IFVM.Execution
                                         throw new NotSupportedException($"Invalid memory size: {readMemory.Size}");
                                 }
 
+                                break;
+                            }
+
+                        case AstNodeKind.GetMemorySize:
+                            {
+                                evaluationStack.Push((uint)_machine.Memory.Size);
                                 break;
                             }
 

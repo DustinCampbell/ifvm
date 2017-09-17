@@ -58,12 +58,44 @@ namespace IFVM.Glulx.Functions
                         size: ValueSize.DWord);
                     break;
 
+                case Opcodes.op_aloadb:
+                    BindRead(
+                        baseAddressOp: loadOperands[0],
+                        offsetOp: loadOperands[1],
+                        storeOp: storeOperands[0],
+                        size: ValueSize.Byte);
+                    break;
+
+                case Opcodes.op_aloads:
+                    BindRead(
+                        baseAddressOp: loadOperands[0],
+                        offsetOp: loadOperands[1],
+                        storeOp: storeOperands[0],
+                        size: ValueSize.Word);
+                    break;
+
                 case Opcodes.op_astore:
                     BindWrite(
                         baseAddressOp: loadOperands[0],
                         offsetOp: loadOperands[1],
                         valueOp: loadOperands[2],
                         size: ValueSize.DWord);
+                    break;
+
+                case Opcodes.op_astoreb:
+                    BindWrite(
+                        baseAddressOp: loadOperands[0],
+                        offsetOp: loadOperands[1],
+                        valueOp: loadOperands[2],
+                        size: ValueSize.Byte);
+                    break;
+
+                case Opcodes.op_astores:
+                    BindWrite(
+                        baseAddressOp: loadOperands[0],
+                        offsetOp: loadOperands[1],
+                        valueOp: loadOperands[2],
+                        size: ValueSize.Word);
                     break;
 
                 case Opcodes.op_call:
@@ -114,6 +146,11 @@ namespace IFVM.Glulx.Functions
                     BindDivide(
                         leftOp: loadOperands[0],
                         rightOp: loadOperands[1],
+                        storeOp: storeOperands[0]);
+                    break;
+
+                case Opcodes.op_getmemsize:
+                    BindGetMemorySize(
                         storeOp: storeOperands[0]);
                     break;
 
@@ -615,6 +652,12 @@ namespace IFVM.Glulx.Functions
             var right = BindLoadOperand(rightOp);
 
             BindStoreOperand(storeOp, left.Minus(right));
+        }
+
+        private void BindGetMemorySize(Operand storeOp)
+        {
+            BindStoreOperand(storeOp,
+                AstFactory.GetMemorySize());
         }
 
         private void BindRead(Operand baseAddressOp, Operand offsetOp, Operand storeOp, ValueSize size)

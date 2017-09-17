@@ -251,6 +251,11 @@ namespace IFVM.Ast
             Visit(node.Expression);
         }
 
+        public override void VisitGetMemorySize(AstGetMemorySize node)
+        {
+            Append("get-memory-size");
+        }
+
         public override void VisitGreaterThanExpression(AstGreaterThanExpression node)
         {
             Parenthesize(() =>

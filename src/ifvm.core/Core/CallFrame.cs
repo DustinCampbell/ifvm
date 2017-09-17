@@ -63,7 +63,7 @@ namespace IFVM.Core
             return _locals[index];
         }
 
-        public void WriteIndex(int index, uint value)
+        public void WriteLocal(int index, uint value)
         {
             ValidateLocalIndex(index);
             _locals[index] = value;

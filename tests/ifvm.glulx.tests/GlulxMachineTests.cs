@@ -306,6 +306,59 @@ label_48:
         }
 
         [Fact]
+        public async Task advent_glulx_function_11072_has_correct_body()
+        {
+            #region expected
+            const string expected = @"
+label_0:
+    if (local_0 < 24) then 
+        return 0
+label_1:
+    local_2 <- get-memory-size
+    push local_2
+    push local_0
+    push call 110c4 (pop, pop)
+    if (pop >= 0) then 
+        return 0
+label_2:
+    local_1 <- read.1(local_0 + 0)
+    if (local_1 < e0) then 
+        jump label_4
+label_3:
+    return 3
+label_4:
+    if (local_1 < c0) then 
+        jump label_6
+label_5:
+    return 2
+label_6:
+    if (local_1 < 70) then 
+        jump label_10
+label_7:
+    if (local_1 > 7f) then 
+        jump label_10
+label_8:
+    push read.4(0 + (2 * 4))
+    if (local_0 < pop) then 
+        jump label_10
+label_9:
+    return 1
+label_10:
+    return 0
+";
+            #endregion
+
+            using (var stream = Resources.LoadResource(Resources.Glulx_Advent))
+            {
+                var machine = await GlulxMachine.CreateAsync(stream);
+                var function = machine.GetFunction(0x11072);
+                var body = AstDumper.Dump(function.Body);
+
+                Assert.Equal(expected.Trim(), body.Trim());
+            }
+        }
+
+        [Fact]
         public async Task glulxercise_glulx_version_is_3_1_3()
         {
             using (var stream = Resources.LoadResource(Resources.Glulx_Glulxercise))

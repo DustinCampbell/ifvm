@@ -75,6 +75,8 @@
       <Field Name="Size" Type="ValueSize" DoNotVisit="true" />
     </Node>
 
+    <Node Name="AstGetMemorySize" Base="AstExpression" />
+
     <Node Name="AstDispatchExpression" Base="AstExpression">
       <Field Name="Function" Type="DispatchFunction" DoNotVisit="true" />
       <Field Name="Arguments" Type="AstExpression" IsList="true" />

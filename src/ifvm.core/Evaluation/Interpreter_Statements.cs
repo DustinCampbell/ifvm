@@ -19,8 +19,25 @@ namespace IFVM.Execution
                         break;
                     }
 
+                case AstNodeKind.StackPushStatement:
+                    {
+                        var stackPushStatement = (AstStackPushStatement)statement;
+                        var value = Evaluate(stackPushStatement.Value);
+                        _machine.Stack.PushDWord(value);
+                        break;
+                    }
+
+                case AstNodeKind.WriteLocalStatement:
+                    {
+                        var writeLocalStatement = (AstWriteLocalStatement)statement;
+                        var index = (int)Evaluate(writeLocalStatement.Local.Index);
+                        var value = Evaluate(writeLocalStatement.Value);
+                        _machine.CurrentFrame.WriteLocal(index, value);
+                        break;
+                    }
+
                 default:
-                    throw new InvalidOperationException($"Invalid statement kind: {statement.Kind}");
+                    throw new NotSupportedException($"Invalid statement kind: {statement.Kind}");
             }
         }
     }
