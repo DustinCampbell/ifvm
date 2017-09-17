@@ -14,4 +14,8 @@
     </EmbeddedResource>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\ifvm.core\ifvm.core.csproj" />
+  </ItemGroup>
+
 </Project>

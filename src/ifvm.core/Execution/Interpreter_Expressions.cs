@@ -9,6 +9,9 @@ namespace IFVM.Execution
         {
             switch (expression.Kind)
             {
+                case AstNodeKind.ConstantExpression:
+                    return (uint)((AstConstantExpression)expression).Value;
+
                 default:
                     throw new InvalidOperationException($"Invalid expression kind: {expression.Kind}");
             }
