@@ -1,7 +1,8 @@
 ﻿using System;
+using IFVM.Ast;
 using IFVM.Collections;
 
-namespace IFVM.Ast.FlowAnalysis
+namespace IFVM.FlowAnalysis
 {
     public partial class ControlFlowGraph : Graph<ControlFlowGraph.Builder, ControlFlowGraph.Block, ControlFlowGraph.Block.Builder>
     {
@@ -68,9 +69,9 @@ namespace IFVM.Ast.FlowAnalysis
                             }
 
                             currentBlockId = labelBlockId;
-                        }
 
-                        break;
+                            break;
+                        }
 
                     case AstNodeKind.JumpStatement:
                         {
@@ -78,9 +79,9 @@ namespace IFVM.Ast.FlowAnalysis
                             var jumpBlockId = LabelToBlockId(jumpStatement.Label);
 
                             builder.AddEdge(currentBlockId, jumpBlockId);
-                        }
 
-                        break;
+                            break;
+                        }
 
                     case AstNodeKind.BranchStatement:
                         {
@@ -95,15 +96,12 @@ namespace IFVM.Ast.FlowAnalysis
                                         var jumpBlockId = LabelToBlockId(jumpStatement.Label);
 
                                         builder.AddEdge(currentBlockId, jumpBlockId);
-                                    }
 
-                                    break;
+                                        break;
+                                    }
 
                                 case AstNodeKind.ReturnStatement:
-                                    {
-                                        builder.AddEdge(currentBlockId, BlockId.Exit);
-                                    }
-
+                                    builder.AddEdge(currentBlockId, BlockId.Exit);
                                     break;
 
                                 default:

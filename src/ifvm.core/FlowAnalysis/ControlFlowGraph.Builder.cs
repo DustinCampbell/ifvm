@@ -1,4 +1,6 @@
-﻿namespace IFVM.Ast.FlowAnalysis
+﻿using IFVM.Collections;
+
+namespace IFVM.FlowAnalysis
 {
     public partial class ControlFlowGraph
     {

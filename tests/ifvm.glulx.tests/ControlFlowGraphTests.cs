@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
-using IFVM.Ast.FlowAnalysis;
+using IFVM.Collections;
+using IFVM.FlowAnalysis;
 using IFVM.TestUtilities;
 using Xunit;
-
-using static IFVM.Collections.Graph;
 
 namespace IFVM.Glulx.Tests
 {

@@ -1,6 +1,6 @@
 ﻿using System;
+using IFVM.Collections;
 using Xunit;
-using static IFVM.Collections.Graph;
 
 namespace IFVM.Core.Tests
 {

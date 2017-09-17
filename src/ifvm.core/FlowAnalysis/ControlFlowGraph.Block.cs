@@ -1,7 +1,8 @@
 ﻿using System.Collections.Immutable;
+using IFVM.Ast;
 using IFVM.Collections;
 
-namespace IFVM.Ast.FlowAnalysis
+namespace IFVM.FlowAnalysis
 {
     public partial class ControlFlowGraph
     {
