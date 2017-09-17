@@ -1,5 +1,5 @@
 ﻿using System;
-using IFVM.Utilities;
+using IFVM.Collections;
 
 namespace IFVM.Ast.FlowAnalysis
 {

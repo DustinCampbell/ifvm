@@ -1,5 +1,5 @@
 ﻿using System.Collections.Immutable;
-using IFVM.Utilities;
+using IFVM.Collections;
 
 namespace IFVM.Ast.FlowAnalysis
 {
@@ -10,7 +10,7 @@ namespace IFVM.Ast.FlowAnalysis
             public ImmutableList<AstStatement> Statements { get; }
 
             private Block(
-                Graph.BlockId id,
+                BlockId id,
                 ImmutableSortedSet<BlockId> predecessors,
                 ImmutableSortedSet<BlockId> successors,
                 ImmutableList<AstStatement> statements)

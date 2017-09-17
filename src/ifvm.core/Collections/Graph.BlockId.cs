@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace IFVM.Utilities
+namespace IFVM.Collections
 {
     public partial class Graph
     {

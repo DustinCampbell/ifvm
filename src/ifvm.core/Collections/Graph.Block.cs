@@ -1,6 +1,6 @@
 ﻿using System.Collections.Immutable;
 
-namespace IFVM.Utilities
+namespace IFVM.Collections
 {
     public partial class Graph
     {

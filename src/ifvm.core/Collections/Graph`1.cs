@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Immutable;
 
-namespace IFVM.Utilities
+namespace IFVM.Collections
 {
     public abstract class Graph<TBuilder, TBlock, TBlockBuilder> : Graph
         where TBlock : Graph.Block

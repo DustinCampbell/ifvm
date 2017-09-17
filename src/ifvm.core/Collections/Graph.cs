@@ -1,4 +1,4 @@
-﻿namespace IFVM.Utilities
+﻿namespace IFVM.Collections
 {
     public abstract partial class Graph
     {
